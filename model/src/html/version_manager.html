@@ -1,0 +1,71 @@
+<div class="version_manager comm_container" v-cloak>
+	<h1 class="comm_title">系统管理 >> 版本管理</h1>
+	<div class="comm_table">
+		<button class="add_button">+添加新版本</button>
+		<div class="comm_table_content">
+			<ul class="comm_table_title">
+				<li class="col_type_2"><span>版本ID</span></li>
+				<li class="col_type_3"><span>更新版本</span></li>
+				<li class="col_type_3"><span>状态</span></li>
+				<li class="col_type_5"><span>下载URL</span></li>
+				<li class="col_type_2"><span>系统</span></li>
+				<li class="col_type_4"><span>添加时间</span></li>
+				<li class="col_type_5"><span>更新内容</span></li>
+				<li class="col_type_4"><span>操作</span></li>
+			</ul>
+			<ul class="comm_table_raw"  v-for = "versionItem in versionList">
+				<li class="col_type_2"><span>{{versionItem.versionId}}</span></li>
+				<li class="col_type_3"><span>{{versionItem.version}}</span></li>
+				<li class="col_type_3"><span>{{versionItem.isUpdate | trans-update-status}}</span></li>
+				<li class="col_type_5"><span class="ellipsis">{{versionItem.downloadUrl}}</span></li>
+				<li class="col_type_2"><span>{{versionItem.appenv | trans-appenv-status}}</span></li>
+				<li class="col_type_4"><span>{{versionItem.addTime | trans-date}}</span></li>
+				<li class="col_type_5"><span class="ellipsis">{{versionItem.updateContent}}</span></li>
+				<li class="col_type_4 operate"><span @click = "showDetailDialog(versionItem)">编辑</span><span @click = "showPassDialog(versionItem)">删除</span></li>
+			</ul>
+		</div>
+	</div>
+	<div class="dialog_container" id="detail_dialog">
+	    <div class="dialog">
+	    	    <h1 class="dialog_title">菜单</h1>
+		    <span class="b_close">×</span>
+		    <article class="input_article">
+		    	<span class="mistake"></span>
+		    	<section class="input_section"><label>版本:</label><input type="text" name="version" id="version" placeholder="不得为空"></section>
+		    	<section class="input_section">
+		    		<label>系统:</label>
+		    		<div class="comm_search_item verify_state">
+		    			<select name="appenv" class="input_width_3" id="appenv">
+		    			  <option value="1">IOS</option>
+		    			  <option value="2">Android</option>
+					</select>
+		    		</div>
+			</section>
+		    	<section class="input_section"><label>下载URL:</label><input type="text" name="downloadUrl" placeholder="可以为空" id="downloadUrl"></section>
+		    	<section class="input_section"><label>更新内容:</label><input type="text" name="updateContent" placeholder="可以为空" id="updateContent"></section>
+		    	<section class="input_section">
+		    		<label>状态:</label>
+		    		<div class="comm_search_item verify_state">
+		    			<select name="isUpdate" class="input_width_3" id="isUpdate">
+		    			  <option value="0">不需要更新</option>
+		    			  <option value="1">需要更新</option>
+		    			  <option value="2">需要强制更新</option>
+					</select>
+		    		</div>
+			</section>
+		    </article>
+		    <div class="button_container">
+		    	<button class="agree">确定</button>
+		    </div>
+	    </div>
+	</div>
+	<div class="dialog_container" id="pass_dialog">
+	    <div class="dialog">
+	    	    <h1 class="dialog_title">确定要删除吗?</h1>
+		    <span class="b_close">×</span>
+		    <div class="button_container">
+		    	<button class="agree">确定</button>
+		    </div>
+	    </div>
+	</div>
+</div>

@@ -1,0 +1,148 @@
+<div class="shop_info_verify comm_container" v-cloak>
+	<h1 class="comm_title">商户管理 >> 实体店认证信息审核</h1>
+	<div class="comm_table">
+		<div class="comm_search_box">
+			<div class="comm_search_item">
+				<label for="verifyPhone">手机号</label>
+				<input type="text" name="verifyPhone" class="input_width_3" id="verifyPhone" autocomplete>
+			</div>
+			<div class="comm_search_item verify_state">
+				<label for="verifyType">认证类型</label>
+				<select name="verifyType" class="status input_width_3" id="verifyType">
+					<option value="" selected>全部</option>
+					<option v-for="item in $verifyStatus" :value="item.value">{{item.text}}</option>
+				</select>
+			</div>
+			<div class="comm_search_item">
+				<label for="storeName">店铺名称</label>
+				<input type="text" name="storeName" class="input_width_3" id="storeName" autocomplete>
+			</div>
+			<div class="comm_search_item verify_state">
+				<label for="verifyStatus">审核状态</label>
+				<select name="verifyStatus" class="status input_width_2" id="verifyStatus">
+					<option value="" selected>全部</option>
+					<option value="-1">失败</option>
+					<option value="0">审核中</option>
+					<option value="1">通过</option>
+				</select>
+			</div>
+			<div class="comm_search_item">
+				<label for="userName">用户名称</label>
+				<input type="text" name="userName" class="input_width_3" id="userName" autocomplete>
+			</div>
+			<div class="cf"></div>
+			<div class="comm_search_item">
+				<label for="beginTime">起始时间</label>
+				<input type="text" name="beginTime" class="flatpickr input_width_3" id="beginTime" autocomplete>
+			</div>
+			<div class="comm_search_item">
+				<label for="endTime">结束时间</label>
+				<input type="text" name="endTime" class="flatpickr input_width_3" id="endTime" autocomplete>
+			</div>
+			<div class="comm_search_item">
+				<label for="appFans">粉丝数</label>
+				<input type="number" name="appFansNum" class="input_width_2" id="appFans" autocomplete >
+			</div>
+			<div class="comm_search_item">
+				<label for="orderNum">订单数</label>
+				<input type="number" name="orderNum" class="input_width_2" id="orderNum" autocomplete >
+			</div>
+			<div class="comm_search_item verify_state">
+				<label for="bzj">保证金</label>
+				<select name="bzj" id="bzj">
+					<option value="">全部</option>
+					<option value="0">未缴纳</option>
+					<option value="1">已缴纳</option>
+				</select>
+			</div>
+			<button class="comm_search_item comm_button" id="download">下载</button>
+			<button class="comm_search_item comm_button" id="shop_verify_search">搜索</button>
+		</div>
+		<div class="comm_table_content">
+			<ul class="comm_table_title">
+				<li class="col_type_4"><input type="checkbox" v-model="isChooseAll"><span class="ploperate" @click="showRefuseDialog()">批量操作</span></li>
+				<li class="col_type_4"><span>商铺名称</span></li>
+				<li class="col_type_3"><span>联系人</span></li>
+				<li class="col_type_3"><span>联系电话</span></li>
+				<li class="col_type_4"><span>提交时间</span></li>
+				<li class="col_type_3"><span>验证类型</span></li>
+				<li class="col_type_2"><span>身份证</span></li>
+				<li class="col_type_2"><span>店铺分类</span></li>
+				<li class="col_type_2"><span>审核状态</span></li>
+				<li class="col_type_2"><span>保证金</span></li>
+				<li class="col_type_2"><span>粉丝数</span></li>
+				<li class="col_type_2"><span>销量</span></li>
+				<li class="col_type_4"><span>操作</span></li>
+			</ul>
+			<ul class="comm_table_raw" v-for = "(shopItem,index) in shopList">
+				<li class="col_type_4"><input type="checkbox" v-model="shopItem.isChoose"></li>
+				<li class="col_type_4"><span>{{shopItem.spaceVerify.spaceName}}</span></li>
+				<li class="col_type_3"><span>{{shopItem.spaceVerify.verifyName}}</span></li>
+				<li class="col_type_3"><span>{{shopItem.spaceVerify.verifyPhone}}</span></li>
+				<li class="col_type_4"><span>{{shopItem.spaceVerify.submitTime | trans-date}}</span></li>
+				<li class="col_type_3"><span>{{shopItem.spaceVerify.verifyType | trans-verify-type}}</span></li>
+				<li class="col_type_2 sfz_container"><img :src="iconPic(shopItem.verifyPics,3,1)" @click="$showBigPic($event)"><img :src="iconPic(shopItem.verifyPics,3,2)" @click="$showBigPic($event)"></li>
+				<li class="col_type_2">{{shopItem.spaceVerify.classifyName}}</li>
+				<li class="col_type_2"><span>{{shopItem.spaceVerify.verifyStatus | trans-verify-status}}</span></li>
+				<li class="col_type_2"><span>{{shopItem.spaceVerify.depositStatus==0?'未缴纳':'已缴纳'}}</span></li>
+				<li class="col_type_2"><span>{{shopItem.fansCount}}</span></li>
+				<li class="col_type_2"><span>{{shopItem.sellCount}}</span></li>
+				<li class="col_type_4 operate"><span :class="{hidden:isShowPass(shopItem.spaceVerify.verifyStatus)}" @click="showRefuseDialog(shopItem)">操作</span><span @click="showDetailDialog(shopItem)">查看</span></li>
+			</ul>
+		</div>
+		<div class="comm_page">
+			<span>共{{countNum}}条,每页显示6条,共{{pagesCount}}页,当前为第{{currentPage}}页</span>
+			<div class="comm_pagination_control">
+				<ul>
+					<li v-for = "(pageItem,index) in pageArray" :class="{  'active': pageItem.isActive, 'page_hide': pageItem.isHidden  }" @click = "jumpPage(pageItem)">{{pageItem.count}}</li>
+				</ul>
+				<div class="page_input">
+					<label for="page_index">跳转:</label>
+					<input type="text" name="page_index" id="page_index" >
+				</div>
+				<button class="page_button">GO</button>
+			</div>
+		</div>
+	</div>
+	<div class="dialog_container" id="detail_dialog">
+	    <div class="dialog">
+	    	    <h1 class="dialog_title">实体店认证信息审核</h1>
+		    <span class="b_close">×</span>
+		    <article>
+		    	<section class="dialog_raw_1"><span>商铺名称</span><div class="right_part">{{detailContent.spaceName}}</div></section>
+		    	<section class="dialog_raw_2"><span>联系人</span><div class="right_part">{{detailContent.verifyName}}</div></section>
+		    	<section class="dialog_raw_1"><span>联系电话</span><div class="right_part">{{detailContent.verifyPhone}}</div></section>
+		    	<section class="dialog_raw_2"><span>身份证</span><div class="right_part">{{detailContent.verifyNo}}</div></section>
+		    	<section class="dialog_raw_1"><span>验证类型</span><div class="right_part">{{detailContent.verifyType | trans-verify-type}}</div></section>
+		    	<section v-if="detailContent.pics1 && detailContent.pics1.length > 0" class="dialog_raw_2 dialog_raw_3"><span>营业执照</span><div class="right_part"><img v-for="pic in detailContent.pics1" :src="$iconPic(pic)"  @click="$showBigPic($event)"></div></section>
+		    	<section v-if="detailContent.pics2 && detailContent.pics2.length > 0" class="dialog_raw_1 dialog_raw_3"><span>商铺图片</span><div class="right_part"><img v-for="pic in detailContent.pics2" :src="$iconPic(pic)"  @click="$showBigPic($event)"></div></section>
+				<section v-if="detailContent.pics3 && detailContent.pics3.length > 0" class="dialog_raw_2 dialog_raw_3"><span>身份证</span><div class="right_part"><img v-for="pic in detailContent.pics3" :src="$iconPic(pic)"  @click="$showBigPic($event)"></div></section>
+				<section v-if="detailContent.pics4 && detailContent.pics4.length > 0" class="dialog_raw_1 dialog_raw_3"><span>护照</span><div class="right_part"><img v-for="pic in detailContent.pics4" :src="$iconPic(pic)"  @click="$showBigPic($event)"></div></section>
+				<section v-if="detailContent.pics5 && detailContent.pics5.length > 0" class="dialog_raw_2 dialog_raw_3"><span>产品授权书</span><div class="right_part"><img v-for="pic in detailContent.pics5" :src="$iconPic(pic)"  @click="$showBigPic($event)"></div></section>
+				<section v-if="detailContent.pics6 && detailContent.pics6.length > 0" class="dialog_raw_1 dialog_raw_3"><span>粉丝截图</span><div class="right_part"><img v-for="pic in detailContent.pics6" :src="$iconPic(pic)"  @click="$showBigPic($event)"></div></section>
+				<section v-if="detailContent.pics7 && detailContent.pics7.length > 0" class="dialog_raw_2 dialog_raw_3"><span>源产地照片</span><div class="right_part"><img v-for="pic in detailContent.pics7" :src="$iconPic(pic)"  @click="$showBigPic($event)"></div></section>
+				<section v-if="detailContent.pics8 && detailContent.pics8.length > 0" class="dialog_raw_1 dialog_raw_3"><span>工厂照片</span><div class="right_part"><img v-for="pic in detailContent.pics8" :src="$iconPic(pic)"  @click="$showBigPic($event)"></div></section>
+				<section v-if="detailContent.pics9 && detailContent.pics9.length > 0" class="dialog_raw_2 dialog_raw_3"><span>经营许可证</span><div class="right_part"><img v-for="pic in detailContent.pics9" :src="$iconPic(pic)"  @click="$showBigPic($event)"></div></section>
+			</article>
+		    <div class="button_container">
+		    	<button class="refuse">操作</button>
+		    </div>
+	    </div>
+	</div>
+	<div class="dialog_container" id="refuse_dialog">
+	<div class="dialog">
+		<h1 class="dialog_title">审核操作</h1>
+		<span class="b_close">×</span>
+		<article>
+			<section class="dialog_raw_4">
+				<label><input type="radio" name="varify_agree" value="-1">拒绝</label>
+				<label><input type="radio" name="varify_agree" value="1">通过</label>
+			</section>
+			<textarea placeholder="请输入拒绝理由,200字内" maxlength="200"></textarea>
+		</article>
+		<div class="button_container">
+			<button class="refuse">确定</button>
+		</div>
+	</div>
+</div>
+</div>

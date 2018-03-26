@@ -1,0 +1,84 @@
+<div class="douyoushuo comm_container">
+    <h1 class="comm_title">豆友说</h1>
+    <ul class="search_box">
+        <li>
+            <span>店铺ID:</span><input type="text" placeholder="请输入店铺ID" v-model="spaceId">
+        </li>
+        <li>
+            <span>店铺名称(作者):</span><input type="text" placeholder="请输入" v-model="spaceName">
+        </li>
+        <li>
+            <span>文章标题:</span><input type="text" placeholder="请输入" v-model="title">
+        </li>
+        <li>
+            <span>是否置顶:</span>
+            <select id="ding" v-model="zhiding">
+                <option value="3">全部</option>
+                <option value="1">已置顶</option>
+                <option value="0">未置顶</option>
+            </select>
+        </li>
+        <li>
+            <button class="search" @click="search">搜索</button>
+        </li>
+    </ul>
+    <table>
+        <thead>
+            <tr>
+            <td>店铺ID</td>
+            <td>店铺名称(作者)</td>
+            <td>认证类型</td>
+            <td>文章标题</td>
+            <td>手机号</td>
+            <td>创建时间</td>
+            <td>操作</td>
+        </tr>
+        </thead>
+        <tbody>
+            <tr v-for="(item,index) in tableData">
+                <td>{{item.spaceNum}}</td>
+                <td>{{item.spaceName}}</td>
+                <td v-if="item.verifyType==1">实名认证</td>
+                <td v-if="item.verifyType==2">实体店认证</td>
+                <td v-if="item.verifyType==3">全景店认证</td>
+                <td v-if="item.verifyType==4">网络红人</td>
+                <td v-if="item.verifyType==5">海外买手</td>
+                <td v-if="item.verifyType==6">实力工厂</td>
+                <td v-if="item.verifyType==7">源头好货</td>
+                <td v-if="item.verifyType==8">旗舰店</td>
+                <td v-if="item.verifyType!==1&&item.verifyType!==2&&item.verifyType!==3&&item.verifyType!==4&&item.verifyType!==5&&item.verifyType!==6&&item.verifyType!==7&&item.verifyType!==8">无</td>
+                <td><p>{{item.articleTitle}}</p></td>
+                <td>{{item.spacePhone}}</td>
+
+                <td>{{item.addTime | trans-date}}</td>
+                <td>
+                    <span @click="noTop(item,index)" v-if="item.score==0">置顶</span><span @click="noTop(item,index)" v-else>取消置顶</span><br><span @click="showDel(item.articleId,index)">删除</span><br><span @click="showDetail(item)">查看</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="comm_page">
+        <span>共{{countNum}}条,每页显示10条,共{{pagesCount}}页,当前为第{{currentPage}}页</span>
+        <div class="comm_pagination_control">
+            <ul>
+                <li v-for = "(pageItem,index) in pageArray" :class="{  'active': pageItem.isActive, 'page_hide': pageItem.isHidden  }" @click = "jumpPage(pageItem.count,pageItem)">{{pageItem.count}}</li>
+            </ul>
+            <div class="page_input">
+                <label for="page_index">跳转:</label>
+                <input type="text" name="page_index" id="page_index" v-model="targetPage">
+            </div>
+            <button class="page_button" @click="jumpPage(targetPage)">GO</button>
+        </div>
+    </div>
+    <div class="del_box" v-if="delBox">
+        <p class="title">删除原因</p>
+        <textarea placeholder="请输入原因" v-model="delReason"></textarea>
+        <div class="btn"><button class="chanel" @click="delBox=false;">取消</button><button class="action" @click="del()">确认删除</button></div>
+    </div>
+    <div class="del_box" v-show="detailBox">
+        <p class="title">文章详情 <span @click="detailBox=false">X</span></p>
+        <p class="name">{{articleTitle}} <span>({{activeSpaceName}})</span></p>
+        <p class="content">{{articleContent}}</p>
+        <img v-for="list in picUrls" :src="list" alt="" class="content">
+    </div>
+</div>

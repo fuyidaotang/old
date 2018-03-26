@@ -1,0 +1,125 @@
+<div class="product_query comm_container" v-cloak>
+	<h1 class="comm_title">商品管理 >> 商品查询</h1>
+	<div class="comm_table">
+		<div class="comm_search_box">
+			<div class="comm_search_item">
+				<label for="spaceName">商铺名称</label>
+				<input type="text" name="spaceName" id="spaceName" autocomplete >
+			</div>
+			<div class="comm_search_item">
+				<label for="productName">店铺ID</label>
+				<input type="text" name="productId" id="productId" v-model="productId" autocomplete >
+			</div>
+			<div class="comm_search_item">
+				<label for="productName">商品名称</label>
+				<input type="text" name="productName" id="productName" autocomplete >
+			</div>
+			<div class="comm_search_item verify_state">
+				<label for="productStatue">商品所属类目</label>
+				<select name="productStatue" class="productStatue input_width_3" v-model="caryCode">
+					<option value="0">推荐</option>
+					<option v-for="list in codeList" :value="list.productCategoryCode">{{list.productCategoryName}}</option>
+				</select>
+			</div>
+			<div class="cf"></div>
+			<div class="comm_search_item">
+				<label for="beginTime">起始时间</label>
+				<input type="text" name="beginTime" class="flatpickr input_width_4" id="beginTime" autocomplete>
+			</div>
+			<div class="comm_search_item">
+				<label for="endTime">结束时间</label>
+				<input type="text" name="endTime" class="flatpickr input_width_4" id="endTime" autocomplete>
+			</div>
+			<div class="comm_search_item verify_state">
+				<label for="productStatue">状态</label>
+				<select name="productStatue" class="productStatue input_width_3" id="productStatue">
+					<option value="" selected>全部</option>
+					<option value="0">未发布</option>
+					<option value="1">已上架</option>
+					<option value="2">已下架</option>
+				</select>
+			</div>
+			<button class="comm_search_item comm_button" id="shop_verify_search">搜索</button>
+		</div>
+		<div class="comm_table_content">
+			<ul class="comm_table_title">
+				<li class="col_type_2"><span>id</span></li>
+				<li class="col_type_3"><span>商品图片</span></li>
+				<li class="col_type_4"><span>商铺名称</span></li>
+				<li class="col_type_5"><span>商品名称</span></li>
+				<li class="col_type_4"><span>商品所属类目</span></li>
+				<li class="col_type_3"><span>价格</span></li>
+				<li class="col_type_5"><span>最后编辑时间</span></li>
+				<li class="col_type_2"><span>状态</span></li>
+				<li class="col_type_2"><span>分数</span></li>
+				<li class="col_type_3"><span>操作</span></li>
+			</ul>
+			<ul class="comm_table_raw"  v-for = "(productItem,index) in productList">
+				<li class="col_type_2"><span>{{productItem.productId}}</span></li>
+				<li class="col_type_3"><img :src="$iconPic(productItem.productImage)" @click="$showBigPic($event)"></li>
+				<li class="col_type_4"><span>{{productItem.spaceName}}</span></li>
+				<li class="col_type_5"><span>{{productItem.productName}}</span></li>
+				<li class="col_type_4"><span>{{productItem.productCategoryDesc}}</span></li>
+				<li class="col_type_3"><span>{{productItem.productPrice | trans-money}}</span></li>
+				<li class="col_type_5"><span>{{productItem.productEdittime | trans-date}}</span></li>
+				<li class="col_type_2"><span>{{productItem.productStatue | trans-product-status}}</span></li>
+				<li class="col_type_2" style="text-align: center"><input style="width:80px;text-align: center;border:1px solid #ddd;" @change="scoreChange(productItem,$event)" type="text" :value="productItem.productScore"></li>
+				<li class="col_type_3 operate"><span @click="showDetailDialog(productItem)">查看</span><span  @click="showPassDialog(productItem)">编辑</span></li>
+			</ul>
+		</div>
+		<div class="comm_page">
+			<span>共{{countNum}}条,每页显示6条,共{{pagesCount}}页,当前为第{{currentPage}}页</span>
+			<div class="comm_pagination_control">
+				<ul>
+					<li v-for = "(pageItem,index) in pageArray" :class="{  'active': pageItem.isActive, 'page_hide': pageItem.isHidden  }" @click = "jumpPage(pageItem)">{{pageItem.count}}</li>
+				</ul>
+				<div class="page_input">
+					<label for="page_index">跳转:</label>
+					<input type="text" name="page_index" id="page_index" >
+				</div>
+				<button class="page_button">GO</button>
+			</div>
+		</div>
+	</div>
+	<div class="dialog_container" id="detail_dialog">
+	    <div class="dialog">
+	    	    <h1 class="dialog_title">用户详情</h1>
+		    <span class="b_close">×</span>
+		    <article>
+		    	<section class="dialog_raw_1"><span>产品id</span><div class="right_part">{{detailContent.productId}}</div></section>
+		    	<section class="dialog_raw_2"><span>产品名称</span><div class="right_part">{{detailContent.productName}}</div></section>
+		    	<section class="dialog_raw_1"><span>产品价格</span><div class="right_part">{{detailContent.productPrice | trans-money}}</div></section>
+		    	<section class="dialog_raw_2"><span>产品分类ID</span><div class="right_part">{{detailContent.productCategoryCode}}</div></section>
+		    	<section class="dialog_raw_1"><span>产品分类描述</span><div class="right_part">{{detailContent.productCategoryDesc}}</div></section>
+		    	<section class="dialog_raw_2"><span>店铺ID</span><div class="right_part">{{detailContent.spaceId}}</div></section>
+		    	<section class="dialog_raw_1"><span>店铺名称</span><div class="right_part">{{detailContent.spaceName}}</div></section>
+		    	<section class="dialog_raw_2"><span>产品状态</span><div class="right_part">{{detailContent.productStatue | trans-product-status}}</div></section>
+		    	<section class="dialog_raw_1"><span>产品审核状态</span><div class="right_part">{{detailContent.productVerify | trans-product-verify-status}}</div></section>
+		    	<section class="dialog_raw_2"><span>产品图片ID</span><div class="right_part">{{detailContent.picId}}</div></section>
+		    	<section class="dialog_raw_1"><span>邮费</span><div class="right_part">{{detailContent.productFreight | trans-money}}</div></section>
+		    	<section class="dialog_raw_2 dialog_raw_3"><span>产品主图</span><div class="right_part"><img :src="$iconPic(detailContent.productImage)" @click="$showBigPic($event)"></div></section>
+		    	<section class="dialog_raw_1"><span>添加时间</span><div class="right_part">{{detailContent.productAddtime | trans-date}}</div></section>
+		    	<section class="dialog_raw_2"><span>最后编辑时间</span><div class="right_part">{{detailContent.productEdittime | trans-date}}</div></section>
+		    </article>
+		    <div class="button_container">
+		    	<button class="agree">编辑</button>
+		    </div>
+	    </div>
+	</div>
+	<div class="dialog_container" id="pass_dialog">
+	    <div class="dialog">
+	    	    <h1 class="dialog_title">更改状态</h1>
+		    <span class="b_close">×</span>
+		    <article>
+		    	<section class="dialog_raw_4">
+			    	<label><input type="radio" name="varify_agree" value="0">未发布</label>
+			    	<label><input type="radio" name="varify_agree" value="1">已上架</label>
+			    	<label><input type="radio" name="varify_agree" value="2">已下架</label>
+			</section>
+		    </article>
+		    <div class="button_container">
+		    	<button class="agree">同意</button>
+		    </div>
+	    </div>
+	</div>
+</div>

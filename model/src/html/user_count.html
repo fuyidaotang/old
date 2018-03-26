@@ -1,0 +1,131 @@
+<div class="user_count comm_container" v-cloak>
+	<h1 class="comm_title">管理员专用 >> 管理员专用</h1>
+	<div class="comm_table">
+		<div class="chart_count">
+			<section>
+				<h4>活跃用户</h4>
+				<div :class="[getType(activeCurrentCount,activeBeforeCount) ? 'fadd' : 'fcut','current_count']">{{activeCurrentCount}}
+					<span :class="[getType(activeCurrentCount,activeBeforeCount) ? 'fadd' : 'fcut']">人</span>
+				</div>
+				<div class="before_count">昨天 {{activeBeforeCount}}</div>
+				<div class="percent">
+					<span :class="[getType(activeCurrentCount,activeBeforeCount) ? 'fadd' : 'fcut']">{{getPercent(activeCurrentCount,activeBeforeCount)}}%</span> 
+					<img :src="[getType(activeCurrentCount,activeBeforeCount) ? iconUp : iconDown]">
+				</div>
+			</section>
+			<section>
+				<h4>新增用户</h4>
+				<div :class="[getType(addCurrentCount,addBeforeCount) ? 'fadd' : 'fcut','current_count']">{{addCurrentCount}}
+					<span :class="[getType(addCurrentCount,addBeforeCount) ? 'fadd' : 'fcut']">人</span>
+				</div>
+				<div class="before_count">昨天 {{addBeforeCount}}</div>
+				<div class="percent">
+					<span :class="[getType(addCurrentCount,addBeforeCount) ? 'fadd' : 'fcut']">{{getPercent(addCurrentCount,addBeforeCount)}}%</span> 
+					<img :src="[getType(addCurrentCount,addBeforeCount) ? iconUp : iconDown]">
+				</div>
+			</section>
+			<section>
+				<h4>下单用户</h4>
+				<div :class="[getType(orderCurrentCount,orderBeforeCount) ? 'fadd' : 'fcut','current_count']">{{orderCurrentCount}}
+					<span :class="[getType(orderCurrentCount,orderBeforeCount) ? 'fadd' : 'fcut']">人</span>
+				</div>
+				<div class="before_count">昨天 {{orderBeforeCount}}</div>
+				<div class="percent">
+					<span :class="[getType(orderCurrentCount,orderBeforeCount) ? 'fadd' : 'fcut']">{{getPercent(orderCurrentCount,orderBeforeCount)}}%</span> 
+					<img :src="[getType(orderCurrentCount,orderBeforeCount) ? iconUp : iconDown]">
+				</div>
+			</section>
+			<section>
+				<h4>观看直播用户</h4>
+				<div :class="[getType(liveCurrentCount,liveBeforeCount) ? 'fadd' : 'fcut','current_count']">{{liveCurrentCount}}
+					<span :class="[getType(liveCurrentCount,liveBeforeCount) ? 'fadd' : 'fcut']">人</span>
+				</div>
+				<div class="before_count">昨天 {{liveBeforeCount}}</div>
+				<div class="percent">
+					<span :class="[getType(liveCurrentCount,liveBeforeCount) ? 'fadd' : 'fcut']">{{getPercent(liveCurrentCount,liveBeforeCount)}}%</span>
+					<img :src="[getType(liveCurrentCount,liveBeforeCount) ? iconUp : iconDown]"> 
+				</div>
+			</section>
+		</div>
+		<div class="chart_container active_user_chart">
+			<h2 class="chart_title">活跃用户统计表</h2>
+			<div class="chart_nav">
+				<ul>
+					<li class="active">今天</li>
+					<li>昨天</li>
+					<li>最近7天</li>
+					<li>最近30天</li>
+					<li>本周</li>
+					<li>上周</li>
+					<li>本月</li>
+					<li>上月</li>
+					<li>自定义</li>
+				</ul>
+				<div class="date_query hidden">
+					<input type="" name="" class="flatpickr startTime"> 至 <input type="" name=""  class="flatpickr endTime">
+				</div>
+			</div>
+			<div id="active_user_chart" class="user_chart"></div>
+		</div>
+		<div class="chart_container new_user_chart">
+			<h2 class="chart_title">新增用户统计表</h2>
+			<div class="chart_nav">
+				<ul>
+					<li class="active">今天</li>
+					<li>昨天</li>
+					<li>最近7天</li>
+					<li>最近30天</li>
+					<li>本周</li>
+					<li>上周</li>
+					<li>本月</li>
+					<li>上月</li>
+					<li>自定义</li>
+				</ul>
+				<div class="date_query hidden">
+					<input type="" name="" class="flatpickr startTime"> 至 <input type="" name=""  class="flatpickr endTime">
+				</div>
+			</div>
+			<div id="new_user_chart" class="user_chart"></div>
+		</div>
+		<div class="chart_container order_user_chart">
+			<h2 class="chart_title">下单用户统计表</h2>
+			<div class="chart_nav">
+				<ul>
+					<li class="active">今天</li>
+					<li>昨天</li>
+					<li>最近7天</li>
+					<li>最近30天</li>
+					<li>本周</li>
+					<li>上周</li>
+					<li>本月</li>
+					<li>上月</li>
+					<li>自定义</li>
+				</ul>
+				<div class="date_query hidden">
+					<input type="" name="" class="flatpickr startTime"> 至 <input type="" name=""  class="flatpickr endTime">
+				</div>
+			</div>
+			<div id="order_user_chart" class="user_chart"></div>
+		</div>
+		<div class="chart_container live_user_chart">
+			<h2 class="chart_title">观看直播用户统计表</h2>
+			<div class="chart_nav">
+				<ul>
+					<li class="active">今天</li>
+					<li>昨天</li>
+					<li>最近7天</li>
+					<li>最近30天</li>
+					<li>本周</li>
+					<li>上周</li>
+					<li>本月</li>
+					<li>上月</li>
+					<li>自定义</li>
+				</ul>
+				<div class="date_query hidden">
+					<input type="" name="" class="flatpickr startTime"> 至 <input type="" name=""  class="flatpickr endTime">
+				</div>
+			</div>
+			<div id="live_user_chart" class="user_chart"></div>
+		</div>
+	</div>
+</div>

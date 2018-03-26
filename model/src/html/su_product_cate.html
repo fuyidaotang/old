@@ -1,0 +1,102 @@
+<div class="stock_cate comm_container">
+    <h1 class="comm_title">进货管理 >> 商品分类</h1>
+    <div class="comm_table">
+        <div class="comm_search_box">
+            <div class="comm_search_item">
+                <label for="productCategoryName">分类名</label>
+                <input type="text" name="productCategoryName" id="productCategoryName" autocomplete>
+            </div>
+            <div class="comm_search_item">
+                <label for="productCategoryCode">id</label>
+                <input type="text" name="productCategoryCode" id="productCategoryCode" autocomplete>
+            </div>
+            <div class="comm_search_item verify_state">
+                <label for="status">状态</label>
+                <select name="status" class="status input_width_3" id="status">
+                    <option value="" selected>全部</option>
+                    <option value="0">不可用</option>
+                    <option value="1">可用</option>
+                </select>
+            </div>
+            <div class="cf"></div>
+            <div class="comm_search_item">
+                <label for="parentCode">父ID</label>
+                <input type="text" name="parentCode" id="parentCode" autocomplete>
+            </div>
+            <button class="comm_search_item comm_button" id="stock_cate_search">搜索</button>
+        </div>
+        <div class="comm_table_content">
+            <ul class="comm_table_title">
+                <li class="col_type_4"><span>id</span></li>
+                <li class="col_type_4"><span>分类名</span></li>
+                <li class="col_type_4"><span>父ID</span></li>
+                <li class="col_type_4"><span>状态</span></li>
+                <li class="col_type_3"><span>图片</span></li>
+                <li class="col_type_3"><span>排序</span></li>
+                <li class="col_type_3"><span>百分比</span></li>
+                <li class="col_type_5"><span>操作</span></li>
+            </ul>
+            <ul class="comm_table_raw" v-for="(cateItem,index) in cateList">
+                <li class="col_type_4"><span>{{cateItem.productCategoryCode}}</span></li>
+                <li class="col_type_4"><span>{{cateItem.productCategoryName}}</span></li>
+                <li class="col_type_4"><span>{{cateItem.parentCode}}</span></li>
+                <li class="col_type_4"><span>{{cateItem.status | trans-shop-status}}</span></li>
+                <li class="col_type_3"><img :src="$iconPic(cateItem.picUrl)" @click="$showBigPic($event)"></li>
+                <li class="col_type_3"><span>{{cateItem.sortNumber}}</span></li>
+                <li class="col_type_3"><span>{{cateItem.categoryPercent}}</span></li>
+                <li class="col_type_5 operate"><span @click="showDetailDialog(cateItem)">编辑</span></li>
+            </ul>
+        </div>
+        <div class="comm_page">
+            <span>共{{countNum}}条,每页显示6条,共{{pagesCount}}页,当前为第{{currentPage}}页</span>
+            <div class="comm_pagination_control">
+                <ul>
+                    <li v-for="(pageItem,index) in pageArray"
+                        :class="{  'active': pageItem.isActive, 'page_hide': pageItem.isHidden  }"
+                        @click="jumpPage(pageItem)">{{pageItem.count}}
+                    </li>
+                </ul>
+                <div class="page_input">
+                    <label for="page_index">跳转:</label>
+                    <input type="text" name="page_index" id="page_index">
+                </div>
+                <button class="page_button">GO</button>
+            </div>
+        </div>
+    </div>
+    <div class="dialog_container" id="detail_dialog">
+        <div class="dialog">
+            <h1 class="dialog_title">菜单</h1>
+            <span class="b_close">×</span>
+            <article class="input_article">
+                <span class="mistake"></span>
+                <section class="input_section"><form id="uploadForm" enctype="multipart/form-data"><input type="file" name="file" id="file" class="uploadFile"></form></section>
+                <section class="input_section hidden"><input type="text" name="picId" id="picId"></section>
+                <section class="input_section">
+                    <label>排序:</label>
+                    <div class="comm_search_item">
+                        <input type="text" name="sortNum" id="sortNum" placeholder="不得为空">
+                    </div>
+                </section>
+                <section class="input_section">
+                    <label>分类的百分比（0-1）:</label>
+                    <div class="comm_search_item">
+                        <input type="text" name="categoryPercent" id="categoryPercent" placeholder="不得为空">
+                    </div>
+                </section>
+                <section class="input_section">
+                    <label>状态:</label>
+                    <div class="comm_search_item verify_state">
+                        <select name="editStatus" class="input_width_3" id="editStatus">
+                            <option value="1">可用</option>
+                            <option value="0">不可用</option>
+                        </select>
+                    </div>
+                </section>
+            </article>
+            <div class="button_container">
+                <button class="agree">确定</button>
+            </div>
+        </div>
+    </div>
+</div>

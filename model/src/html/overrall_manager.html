@@ -1,0 +1,8 @@
+<!--以此类名致敬坑爹的后端工程师-->
+<div class="willGood">
+    <section class="input_section"><form id="uploadForm" enctype="multipart/form-data"><input type="file" name="file" id="file" class="uploadFile"></form></section>
+    <section class="input_section hidden"><input type="text" name="picId" id="picId"></section>
+    <button class="add_button">提交</button>
+    <img v-if="hasPic" :src="picUrl" alt="">
+    <h5 v-if="!hasPic">暂无全景直播封面</h5>
+</div>

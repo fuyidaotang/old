@@ -1,0 +1,111 @@
+<div class="shop_cate comm_container">
+    <h1 class="comm_title">商户管理 >> 订单查询</h1>
+    <div class="comm_table">
+        <div class="comm_search_box">
+            <div class="comm_search_item">
+                <label for="classifyId">分类ID</label>
+                <input type="text" name="classifyId" id="classifyId" autocomplete>
+            </div>
+            <div class="comm_search_item">
+                <label for="classifyName">分类名称</label>
+                <input type="text" name="classifyName" id="classifyName" autocomplete>
+            </div>
+            <div class="comm_search_item verify_state">
+                <label for="status">订单状态</label>
+                <select name="status" class="status input_width_3" id="status">
+                    <option value="" selected>全部</option>
+                    <option value="0">可用</option>
+                    <option value="1">不可用</option>
+                </select>
+            </div>
+            <div class="cf"></div>
+            <div class="comm_search_item">
+                <label for="parentId">父ID</label>
+                <input type="text" name="parentId" id="parentId" autocomplete>
+            </div>
+            <button class="comm_search_item comm_button" id="shop_verify_search">搜索</button>
+            <button class="comm_search_item comm_button" @click="showDetailDialog()">添加</button>
+        </div>
+        <div class="comm_table_content">
+            <ul class="comm_table_title">
+                <li class="col_type_4"><span>分类id</span></li>
+                <li class="col_type_4"><span>分类名</span></li>
+                <li class="col_type_4"><span>父ID</span></li>
+                <li class="col_type_4"><span>状态</span></li>
+                <li class="col_type_3"><span>图片</span></li>
+                <li class="col_type_5"><span>操作</span></li>
+            </ul>
+            <ul class="comm_table_raw" v-for="(shopItem,index) in shopList">
+                <li class="col_type_4"><span>{{shopItem.classifyId}}</span></li>
+                <li class="col_type_4"><span>{{shopItem.classifyName}}</span></li>
+                <li class="col_type_4"><span>{{shopItem.parentId}}</span></li>
+                <li class="col_type_4"><span>{{shopItem.status | trans-shop-status}}</span></li>
+                <li class="col_type_3"><img :src="$iconPic(shopItem.picturePath)" @click="$showBigPic($event)"></li>
+                <li class="col_type_5 operate"><span @click="showDetailDialog(shopItem)">编辑</span><span
+                        @click="showPassDialog(shopItem)">删除</span></li>
+            </ul>
+        </div>
+        <div class="comm_page">
+            <span>共{{countNum}}条,每页显示6条,共{{pagesCount}}页,当前为第{{currentPage}}页</span>
+            <div class="comm_pagination_control">
+                <ul>
+                    <li v-for="(pageItem,index) in pageArray"
+                        :class="{  'active': pageItem.isActive, 'page_hide': pageItem.isHidden  }"
+                        @click="jumpPage(pageItem)">{{pageItem.count}}
+                    </li>
+                </ul>
+                <div class="page_input">
+                    <label for="page_index">跳转:</label>
+                    <input type="text" name="page_index" id="page_index">
+                </div>
+                <button class="page_button">GO</button>
+            </div>
+        </div>
+    </div>
+    <div class="dialog_container" id="detail_dialog">
+        <div class="dialog">
+            <h1 class="dialog_title">菜单</h1>
+            <span class="b_close">×</span>
+            <article class="input_article">
+                <span class="mistake"></span>
+                <section class="input_section"><label>店铺分类名:</label><input type="text" name="classifyNameShow"
+                                                                           id="classifyNameShow" placeholder="不得为空">
+                </section>
+                <section class="input_section">
+                    <label>父ID:</label>
+                    <div class="comm_search_item verify_state hidden">
+                        <select name="parentIdShow" class="input_width_3" id="parentIdShow">
+                            <option v-for="menuItem in menuList" :value="menuItem.classifyId">
+                                {{menuItem.classifyName}}
+                            </option>
+                        </select>
+                    </div>
+                    <span class="menu_loading">载入中...</span>
+                </section>
+                <section class="input_section"><form id="uploadForm" enctype="multipart/form-data"><input type="file" name="file" id="file" class="uploadFile"></form></section>
+                <section class="input_section hidden"><input type="text" name="picId" id="picId"></section>
+                <section class="input_section">
+                    <label>状态:</label>
+                    <div class="comm_search_item verify_state">
+                        <select name="statusShow" class="input_width_3" id="statusShow">
+                            <option value="1">可用</option>
+                            <option value="0">不可用</option>
+                        </select>
+                    </div>
+                </section>
+            </article>
+            <div class="button_container">
+                <button class="agree">确定</button>
+            </div>
+        </div>
+    </div>
+    <div class="dialog_container" id="pass_dialog">
+        <div class="dialog">
+            <h1 class="dialog_title">删除</h1>
+            <span class="b_close">×</span>
+            <div class="button_container">
+                <button class="agree">同意</button>
+            </div>
+        </div>
+    </div>
+</div>

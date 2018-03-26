@@ -1,0 +1,165 @@
+<div class="newbie comm_container">
+    <h1 class="comm_title">新人榜</h1>
+    <ul class="search_box">
+        <li>
+            <span>店铺名称:</span><input type="text" placeholder="请输入店铺名称" v-model="spaceName">
+        </li>
+        <li>
+            <span>店铺ID:</span><input type="text" placeholder="请输入店铺ID" v-model="spaceId">
+        </li>
+        <li>
+            <span>是否在直播:</span>
+            <select id="live" v-model="live">
+                <option value="2">全部</option>
+                <option value="0">未直播</option>
+                <option value="1">直播</option>
+            </select>
+        </li>
+        <li>
+            <span>商品所属类目:</span>
+            <select id="code" v-model="code">
+                <option value="0">推荐</option>
+                <option v-for="list in codeList" :value="list.productCategoryCode">{{list.productCategoryName}}</option>
+            </select>
+        </li>
+    </ul>
+    <ul class="search_box">
+        <li>
+            <span>店铺联系方式:</span><input type="text" placeholder="请输入手机号" v-model="phone">
+        </li>
+        <li>
+            <span>开始时间:</span><input type="text" class="flatpickr" id="beginTime" placeholder="请输入" v-model="beginTime">
+        </li>
+        <li>
+            <span>结束时间:</span><input type="text" class="flatpickr" id="endTime" placeholder="请输入" v-model="endTime">
+        </li>
+        <li>
+            <button @click="search" class="search">搜索</button>
+        </li>
+    </ul>
+    <table>
+        <thead>
+        <tr>
+            <td>店铺ID</td>
+            <td>店铺名称</td>
+            <td>认证类型</td>
+            <td>店铺所属类目</td>
+            <td>店铺等级</td>
+            <td>手机号</td>
+            <td>创建时间</td>
+            <td>是否正在直播</td>
+            <td>店铺分数</td>
+            <td>操作</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="list in userList">
+            <td>{{list.spspaceInfoDomain.spaceId}}</td>
+            <td>{{list.spspaceInfoDomain.spaceName}}</td>
+            <td v-if="list.spspaceInfoDomain.verifyStatus==1">实名认证</td>
+            <td v-if="list.spspaceInfoDomain.verifyStatus==2">实体店认证</td>
+            <td v-if="list.spspaceInfoDomain.verifyStatus==3">全景店认证</td>
+            <td v-if="list.spspaceInfoDomain.verifyStatus==4">网络红人</td>
+            <td v-if="list.spspaceInfoDomain.verifyStatus==5">海外买手</td>
+            <td v-if="list.spspaceInfoDomain.verifyStatus==6">实力工厂</td>
+            <td v-if="list.spspaceInfoDomain.verifyStatus==7">源头好货</td>
+            <td v-if="list.spspaceInfoDomain.verifyStatus==8">旗舰店</td>
+            <td v-if="list.spspaceInfoDomain.verifyStatus!==1&&list.spspaceInfoDomain.verifyStatus!==2&&list.spspaceInfoDomain.verifyStatus!==3&&list.spspaceInfoDomain.verifyStatus!==4&&list.spspaceInfoDomain.verifyStatus!==5&&list.spspaceInfoDomain.verifyStatus!==6&&list.spspaceInfoDomain.verifyStatus!==7&&list.spspaceInfoDomain.verifyStatus!==8">未认证</td>
+            <td>{{list.spspaceInfoDomain.classifyName}}</td>
+            <td>{{list.spspaceInfoDomain.spaceLevel}}</td>
+            <td>{{list.usersDomain.phoneNo}}</td>
+            <td v-if="list.usersDomain.registerDate">{{list.usersDomain.registerDate | trans-date}}</td>
+            <td v-else>{{list.usersDomain.registerTime | trans-date}}</td>
+            <td>{{list.isLive==0?'未直播':'正在直播中'}}</td>
+            <td><input type="text" :value="list.spspaceInfoDomain.spaceScore" @change="scoreChange(list,$event)"></td>
+            <td>
+                <span @click="showDel(list)">剔除</span>
+                <span @click="showDetail(list.usersDomain)">查看</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="comm_page">
+        <span>共{{countNum}}条,每页显示6条,共{{pagesCount}}页,当前为第{{currentPage}}页</span>
+        <div class="comm_pagination_control">
+            <ul>
+                <li v-for = "(pageItem,index) in pageArray" :class="{  'active': pageItem.isActive, 'page_hide': pageItem.isHidden  }" @click = "jumpPage(pageItem.count,pageItem)">{{pageItem.count}}</li>
+            </ul>
+            <div class="page_input">
+                <label for="page_index">跳转:</label>
+                <input type="text" name="page_index" id="page_index" v-model="targetPage">
+            </div>
+            <button class="page_button" @click="jumpPage(targetPage)">GO</button>
+        </div>
+    </div>
+    <div class="del_box detail_box" v-if="detailBox">
+        <p class="title">用户详情<span @click="detailBox=false">X</span></p>
+        <ul class="detail_list">
+            <li>
+                <span class="left">用户ID</span><span class="right">{{activeUser.userId}}</span>
+            </li>
+            <li>
+                <span class="left">头像ID</span><span class="right">{{activeUser.userHeadPicId}}</span>
+            </li>
+            <li>
+                <span class="left">用户昵称</span><span class="right">{{activeUser.userName}}</span>
+            </li>
+            <li>
+                <span class="left">个性签名</span><span class="right">{{activeUser.userSignature}}</span>
+            </li>
+            <li>
+                <span class="left">状态</span><span class="right">{{activeUser.status==0?'正常':'不可用'}}</span>
+            </li>
+            <li>
+                <span class="left">店铺ID</span><span class="right">{{activeUser.spaceId}}</span>
+            </li>
+            <li>
+                <span class="left">性别</span><span class="right">{{activeUser.sex}}</span>
+            </li>
+            <li>
+                <span class="left">注册类型</span>
+                <span class="right" v-if="activeUser.registerType==0">手机</span>
+                <span class="right" v-if="activeUser.registerType==1">QQ</span>
+                <span class="right" v-if="activeUser.registerType==2">微信</span>
+                <span class="right" v-if="activeUser.registerType==3">微博</span>
+                <span class="right" v-if="activeUser.registerType==98">携聘</span>
+                <span class="right" v-if="activeUser.registerType==99">虚拟</span>
+            </li>
+            <li>
+                <span class="left">注册IP</span><span class="right">{{activeUser.registerIp}}</span>
+            </li>
+            <li>
+                <span class="left">注册日期</span><span class="right">{{activeUser.registerDate | trans-date}}</span>
+            </li>
+            <li>
+                <span class="left">手机号</span><span class="right">{{activeUser.phoneNo}}</span>
+            </li>
+            <li>
+                <span class="left">登录ID</span><span class="right">{{activeUser.loginId}}</span>
+            </li>
+            <li>
+                <span class="left">分组ID</span><span class="right">{{activeUser.groupId}}</span>
+            </li>
+            <li>
+                <span class="left">颜值等级</span><span class="right">{{activeUser.faceLevel}}</span>
+            </li>
+            <li>
+                <span class="left">邮箱</span><span class="right">{{activeUser.email}}</span>
+            </li>
+            <li>
+                <span class="left">用户等级</span><span class="right">{{activeUser.authLevel}}</span>
+            </li>
+            <li>
+                <span class="left">最后访问IP</span><span class="right">{{activeUser.accessIp}}</span>
+            </li>
+            <li>
+                <span class="left">最后登录时间</span><span class="right">{{activeUser.accessDate | trans-date}}</span>
+            </li>
+        </ul>
+    </div>
+    <div class="del_box action_box" v-if="actionBox">
+        <p class="title">提示 <span @click="actionBox=false;">X</span></p>
+        <p class="name">确定删除吗？</p>
+        <button class="action" @click="del()">确定删除</button>
+    </div>
+</div>

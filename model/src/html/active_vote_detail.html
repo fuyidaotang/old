@@ -1,0 +1,89 @@
+<div class="comm_container vote_detail">
+    <h1 class="comm_title">营销活动 >> 网红海选 >> {{data.verifyName}}的店铺<span style="">店铺ID:{{data.spaceNum}}&nbsp;&nbsp;&nbsp;网红姓名:{{data.verifyName}}&nbsp;&nbsp;&nbsp;手机号:{{data.phoneNo}}&nbsp;&nbsp;&nbsp;认证类型:
+        <span v-if="data.verifyType==1">实名认证</span>
+        <span v-if="data.verifyType==2">实体店认证</span>
+        <span v-if="data.verifyType==3">全景店认证</span>
+        <span v-if="data.verifyType==4">网络红人</span>
+        <span v-if="data.verifyType==5">海外买手</span>
+        <span v-if="data.verifyType==6">实力工厂</span>
+        <span v-if="data.verifyType==7">源头好货</span>
+        <span v-if="data.verifyType==8">旗舰店</span>
+        &nbsp;&nbsp;&nbsp;今日在线总时长:
+        <span v-if="data.todayLiveTime/1000/60<60">{{data.todayLiveTime?Math.floor(data.todayLiveTime/1000/60)+'分钟':0}}</span>
+        <span v-if="data.todayLiveTime/1000/60>60&&data.todayLiveTime/1000/60<1440">{{parseInt(data.todayLiveTime/1000/60/60)+'小时'+parseInt(data.todayLiveTime/1000/60)%60+'分钟'}}</span>
+        <span v-if="data.todayLiveTime/1000/60>1440">{{Math.round(data.todayLiveTime/1000/60/60/24,2)+'天'+Math.floor(data.todayLiveTime/1000/60/60%24)+'小时'+parseInt(data.todayLiveTime/1000/60%60)+'分钟'}}</span>
+    </span></h1>
+    <div class="container">
+        <div class="header">
+            <span>综合排名:{{data.rank}}</span><span>热力值:{{data.score}}分</span><button class="del" @click="delShow=true;">移除网红库</button> <span>日期选择:从 <input class="flatpickr" id="beginTime" type="text">至 <input
+                class="flatpickr" type="text" id="endTime"></span><button class="search" @click="search">搜索</button>
+        </div>
+        <ul class="data_list">
+            <li>成交额:{{data.orderAmount}}元</li>
+            <li>总票数:{{data.voteCount}}</li>
+            <li>投票人数:{{data.voterNumbers}}人</li>
+            <li>网红粉丝数:{{data.fans}}人</li>
+            <li>店铺收藏:{{data.collections}}人</li>
+            <li>订单数:{{data.orderCount}}单</li>
+            <li>打赏红豆:{{data.giftBean}}个</li>
+            <!--<li>观看人数:888人</li>-->
+            <!--<li>店铺转发:{{data.otherNumber}}次</li>-->
+            <!--<li>商品转发:{{data.selfNumber}}次</li>-->
+            <li v-if="data.liveTime/1000/60<60">在线时长:{{data.liveTime?Math.floor(data.liveTime/1000/60)+'分钟':0}}</li>
+            <li v-if="data.liveTime/1000/60>60&&data.liveTime/1000/60<1440">在线时长:{{parseInt(data.liveTime/1000/60/60)+'小时'+parseInt(data.liveTime/1000/60)%60+'分钟'}}</li>
+            <li v-if="data.liveTime/1000/60>1440">在线时长:{{Math.round(data.liveTime/1000/60/60/24,2)+'天'+Math.floor(data.liveTime/1000/60/60%24)+'小时'+parseInt(data.liveTime/1000/60%60)+'分钟'}}</li>
+        </ul>
+        <div class="content">
+            <div class="title">网红{{data.verifyName}}的商品列表</div>
+            <div class="table">
+                <div>
+                    <table>
+                        <thead>
+                            <tr>
+                            <td>自有商品:{{data.selfNumber}}个</td>
+                            <td>销量</td>
+                            <td>单价</td>
+                            <td>成交均价</td>
+                            <td>商品成交额</td>
+                        </tr>
+                        </thead>
+                        <tr v-for="item in data.selfProduct">
+                            <td>
+                                <p class="pro_name">{{item.productName}}</p>
+                                <p class="pro_id">ID:{{item.prodcutId}}</p>
+                            </td>
+                            <td>{{item.salesVolume}}件</td>
+                            <td>{{item.prodcutPrice}}元</td>
+                            <td>{{item.avgPrice}}元</td>
+                            <td>{{item.amount}}元</td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <table>
+                        <thead>
+                         <tr>
+                            <td>转发卖商品:{{data.otherNumber}}个</td>
+                            <td>销量</td>
+                            <td>佣金</td>
+                        </tr>
+                        </thead>
+                        <tr v-for="item in data.otherProduct">
+                            <td>
+                                <p class="pro_name">{{item.productName}}</p>
+                                <p class="pro_id">ID:{{item.prodcutId}}</p>
+                            </td>
+                            <td>{{item.salesVolume}}件</td>
+                            <td>{{item.commission}}元</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div v-if="delShow" class="dio_box">
+        <div class="title">移出网红库 <span style="font-size: 16px;font-weight: bold;color:#fff;float:right;margin-right:20px;padding:4px;margin-top:4px;cursor:pointer;" @click="delShow=false;">X</span></div>
+        <div class="text">确定将用户移出网红库吗？</div>
+        <button class="action_btn" @click="deleteUser()">确定</button>
+    </div>
+</div>

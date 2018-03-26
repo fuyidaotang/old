@@ -1,0 +1,96 @@
+<div class="comm_container nineKill" @click.stop="imgShow=false;">
+    <h1 class="comm_title">双旦秒杀 >> 双旦商品 <span>添加商品</span></h1>
+    <ul class="search_box">
+        <li><span>手机号：</span><input type="text" v-model="phone"></li>
+        <li><span>店铺名称：</span><input type="text" v-model="spaceName"></li>
+        <li><span>商品名称：</span><input type="text" v-model="proName"></li>
+        <li><span>店铺ID：</span><input type="text" v-model="spaceId"></li>
+        <li><button @click="search">搜索</button></li>
+    </ul>
+    <div class="container">
+        <table>
+            <thead>
+                <tr>
+                    <td>店铺ID</td>
+                    <td>店铺名称</td>
+                    <td>手机号</td>
+                    <td>商品名称</td>
+                    <td>商品图片</td>
+                    <td>上架时间</td>
+                    <td>商品原价</td>
+                    <td>活动价格</td>
+                    <td>库存</td>
+                    <td>销量</td>
+                    <td>状态</td>
+                    <td>商品分数</td>
+                    <td>操作</td>
+                </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(list,index) in tableData">
+                <td v-text="list.spaceNum"></td>
+                <td v-text="list.spaceName"></td>
+                <td v-text="list.spacePhone"></td>
+                <td v-text="list.productName"></td>
+                <td><img @click.stop="showImg($event)"  :src="list.productImage" alt=""></td>
+                <td>{{list.productAddtime | trans-date}}</td>
+                <td v-text="'￥'+list.productPrice+'元'"></td>
+                <td v-text="'￥'+list.eventPrice+'元'"></td>
+                <td v-text="list.productInventory"></td>
+                <td v-text="list.salesVolume"></td>
+                <td v-if="list.productStatue==1">已上架</td>
+                <td v-if="list.productStatue==0">未发布</td>
+                <td v-if="list.productStatue==2">已下架</td>
+                <td v-if="list.productStatue==-1">无</td>
+                <td v-if="list.productStatue==3">已删除</td>
+                <td><input type="text" :value="list.score" @change="scoreChange($event,list)"></td>
+                <td><span @click="showDetail(list)">查看</span><span @click="showDel(index,list)">移出秒杀库</span></td>
+            </tr>
+            </tbody>
+        </table>
+        <p class="no_list" v-if="noList">暂时未查询到信息，请重试...</p>
+        <div v-show="countNum>5" class="comm_page">
+            <span>共{{countNum}}条,每页显示10条,共{{pagesCount}}页,当前为第{{currentPage}}页</span>
+            <div class="comm_pagination_control">
+                <ul>
+                    <li v-for = "(pageItem,index) in pageArray" :class="{  'active': pageItem.isActive, 'page_hide': pageItem.isHidden  }" @click = "jumpPage(pageItem.count,pageItem)">{{pageItem.count}}</li>
+                </ul>
+                <div class="page_input">
+                    <label for="page_index">跳转:</label>
+                    <input type="text" name="page_index" id="page_index" v-model="targetPage">
+                </div>
+                <button class="page_button" @click="jumpPage(targetPage)">GO</button>
+            </div>
+        </div>
+    </div>
+    <img v-if="imgShow" :src="toastImg" alt="" class="toast">
+    <div class="del_box" v-show="delBox">
+        <p class="title">移出秒杀库 <span @click="delBox=false;">×</span></p>
+        <div class="content">
+            <p class="name">确定将商品移出秒杀库吗?</p>
+            <button class="action" @click="del">确定</button>
+        </div>
+    </div>
+    <div class="detail_box" v-show="detailBox">
+        <p class="title">商品详情 <span @click="detailBox=false;">×</span></p>
+        <div class="content">
+            <ul>
+                <li><span>产品ID：</span><span v-text="actionList.productId"></span></li>
+                <li><span>产品名称：</span><span v-text="actionList.productName"></span></li>
+                <li><span>产品价格：</span><span v-text="actionList.productPrice+'元'"></span></li>
+                <li><span>产品分类ID：</span><span v-text="actionList.productCategoryCode"></span></li>
+                <li><span>产品分类描述：</span><span v-text="actionList.productCategoryDesc"></span></li>
+                <li><span>店铺ID：</span><span v-text="actionList.spaceId"></span></li>
+                <li><span>店铺名称：</span><span v-text="actionList.spaceName"></span></li>
+                <li><span>产品状态：</span><span v-if="actionList.productStatue==2">已下架</span><span v-if="actionList.productStatue==0">未发布</span><span v-if="actionList.productStatue==1">已上架</span></li>
+                <li><span>产品审核状态：</span><span v-text="actionList.productVerify==1?'已审核':'未审核'"></span></li>
+                <li><span>产品图片ID：</span><span v-text="actionList.picId"></span></li>
+                <li><span>邮费：</span><span v-text="actionList.productFreight"></span></li>
+                <li><span>产品主图：</span><span><img :src="actionList.productImage" alt=""></span></li>
+                <li><span>添加时间：</span><span>{{actionList.productAddtime | trans-date}}</span></li>
+                <li><span>最后编辑时间：</span><span>{{actionList.productEdittime | trans-date}}</span></li>
+            </ul>
+        </div>
+    </div>
+    <div class="toast" v-text="toastMsg"></div>
+</div>

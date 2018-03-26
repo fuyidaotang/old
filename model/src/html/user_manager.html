@@ -1,0 +1,127 @@
+<div class="user_manager comm_container" v-cloak>
+	<h1 class="comm_title">系统管理 >> 用户管理</h1>
+	<div class="comm_table">
+		<div class="comm_search_box">
+			<div class="comm_search_item">
+				<label for="userName">用户名</label>
+				<input type="text" name="userName" id="userName" autocomplete >
+			</div>
+			<div class="comm_search_item">
+				<label for="phoneNo">手机号码</label>
+				<input type="text" name="phoneNo" id="phoneNo" autocomplete >
+			</div>
+			<div class="comm_search_item verify_state">
+				<label for="loginType">登录方式</label>
+				<select name="loginType" class="loginType input_width_3" id="loginType">
+				  <option value="" selected>全部</option> 
+				  <option value="0">手机</option> 
+				  <option value="1">qq</option> 
+				  <option value="2">微信</option>
+				  <option value="3">微博</option>
+				</select>
+			</div>
+			<div class="cf"></div>
+			<div class="comm_search_item verify_state">
+				<label for="Status">状态</label>
+				<select name="Status" class="Status input_width_3" id="Status">
+				  <option value="" selected>全部</option> 
+				  <option value="0">正常</option> 
+				  <option value="1">不可用</option>
+				</select>
+			</div>
+			<div class="comm_search_item">
+				<label for="beginTime">起始时间</label>
+				<input type="text" name="beginTime" class="flatpickr input_width_4" id="beginTime" autocomplete>
+			</div>
+			<div class="comm_search_item">
+				<label for="endTime">结束时间</label>
+				<input type="text" name="endTime" class="flatpickr input_width_4" id="endTime" autocomplete>
+			</div>
+			<button class="comm_search_item comm_button" id="shop_verify_search">搜索</button>
+		</div>
+		<div class="comm_table_content">
+			<ul class="comm_table_title">
+				<li class="col_type_2"><span>用户id</span></li>
+				<li class="col_type_4"><span>用户名</span></li>
+				<li class="col_type_2"><span>用户等级</span></li>
+				<li class="col_type_2"><span>性别</span></li>
+				<li class="col_type_4"><span>邮箱</span></li>
+				<li class="col_type_3"><span>手机号码</span></li>
+				<li class="col_type_4"><span>注册时间</span></li>
+				<li class="col_type_3"><span>登录方式</span></li>
+				<li class="col_type_3"><span>状态</span></li>
+				<li class="col_type_4"><span>操作</span></li>
+			</ul>
+			<ul class="comm_table_raw"  v-for = "(userItem,index) in userList">
+				<li class="col_type_2"><span>{{userItem.userId}}</span></li>
+				<li class="col_type_4"><span>{{userItem.userName}}</span></li>
+				<li class="col_type_2"><span>{{userItem.authLevel}}</span></li>
+				<li class="col_type_2"><span>{{userItem.sex}}</span></li>
+				<li class="col_type_4"><span>{{userItem.email}}</span></li>
+				<li class="col_type_3"><span>{{userItem.phoneNo}}</span></li>
+				<li class="col_type_4"><span>{{(userItem.registerDate || userItem.registerTime) | trans-date}}</span></li>
+				<li class="col_type_3"><span>{{userItem.registerType | trans-register-type}}</span></li>
+				<li class="col_type_3"><span>{{userItem.status | trans-user-status}}</span></li>
+				<li class="col_type_4 operate"><span @click="showDetailDialog(userItem)">查看</span><span @click="showPassDialog(userItem)">编辑</span></li>
+			</ul>
+		</div>
+		<div class="comm_page">
+			<span>共{{countNum}}条,每页显示6条,共{{pagesCount}}页,当前为第{{currentPage}}页</span>
+			<div class="comm_pagination_control">
+				<ul>
+					<li v-for = "(pageItem,index) in pageArray" :class="{  'active': pageItem.isActive, 'page_hide': pageItem.isHidden  }" @click = "jumpPage(pageItem)">{{pageItem.count}}</li>
+				</ul>
+				<div class="page_input">
+					<label for="page_index">跳转:</label>
+					<input type="text" name="page_index" id="page_index" >
+				</div>
+				<button class="page_button">GO</button>
+			</div>
+		</div>
+	</div>
+	<div class="dialog_container" id="detail_dialog">
+	    <div class="dialog">
+	    	    <h1 class="dialog_title">用户详情</h1>
+		    <span class="b_close">×</span>
+		    <article>
+		    	<section class="dialog_raw_1"><span>用户id</span><div class="right_part">{{detailContent.userId}}</div></section>
+		    	<section class="dialog_raw_2"><span>头像id</span><div class="right_part">{{detailContent.userHeadPicId}}</div></section>
+		    	<section class="dialog_raw_1"><span>用户昵称</span><div class="right_part">{{detailContent.userName}}</div></section>
+		    	<section class="dialog_raw_2"><span>个性签名</span><div class="right_part">{{detailContent.userSignature}}</div></section>
+		    	<section class="dialog_raw_1"><span>状态</span><div class="right_part">{{detailContent.status | trans-user-status}}</div></section>
+		    	<section class="dialog_raw_2"><span>店铺ID</span><div class="right_part">{{detailContent.spaceId}}</div></section>
+		    	<section class="dialog_raw_1"><span>性别</span><div class="right_part">{{detailContent.sex}}</div></section>
+		    	<section class="dialog_raw_2"><span>注册类型</span><div class="right_part">{{detailContent.registerType | trans-register-type}}</div></section>
+		    	<section class="dialog_raw_1"><span>注册IP</span><div class="right_part">{{detailContent.registerIp}}</div></section>
+		    	<section class="dialog_raw_2"><span>注册日期</span><div class="right_part">{{(detailContent.registerDate || detailContent.registerTime) | trans-date}}</div></section>
+		    	<section class="dialog_raw_1"><span>权限设置</span><div class="right_part">{{detailContent.privacy}}</div></section>
+		    	<section class="dialog_raw_2"><span>手机号</span><div class="right_part">{{detailContent.phoneNo}}</div></section>
+		    	<section class="dialog_raw_1"><span>登录ID</span><div class="right_part">{{detailContent.loginId}}</div></section>
+		    	<section class="dialog_raw_2"><span>分组ID</span><div class="right_part">{{detailContent.groupId}}</div></section>
+		    	<section class="dialog_raw_1"><span>颜值等级</span><div class="right_part">{{detailContent.faceLevel}}</div></section>
+		    	<section class="dialog_raw_2"><span>邮箱</span><div class="right_part">{{detailContent.email}}</div></section>
+		    	<section class="dialog_raw_1"><span>用户等级</span><div class="right_part">{{detailContent.authLevel}}</div></section>
+		    	<section class="dialog_raw_2"><span>最后访问IP</span><div class="right_part">{{detailContent.accessIp}}</div></section>
+		    	<section class="dialog_raw_1"><span>最后登录时间</span><div class="right_part">{{detailContent.accessDate}}</div></section>
+		    </article>
+		    <div class="button_container">
+		    	<button class="agree">编辑</button>
+		    </div>
+	    </div>
+	</div>
+	<div class="dialog_container" id="pass_dialog">
+	    <div class="dialog">
+	    	    <h1 class="dialog_title">更改状态</h1>
+		    <span class="b_close">×</span>
+		    <article>
+		    	<section class="dialog_raw_4">
+			    	<label><input type="radio" name="varify_agree" value="0">正常</label>
+			    	<label><input type="radio" name="varify_agree" value="1">不可用</label>
+			</section>
+		    </article>
+		    <div class="button_container">
+		    	<button class="agree">同意</button>
+		    </div>
+	    </div>
+	</div>
+</div>

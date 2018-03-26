@@ -1,0 +1,194 @@
+<div class="shop_get_cash comm_container" v-cloak>
+    <h1 class="comm_title">商户管理 >> 商户提现管理</h1>
+    <!--搜索-->
+    <div class="comm_table">
+        <div class="comm_search_box">
+            <div class="comm_search_item">
+                <label for="userId">用户id</label>
+                <input type="text" name="userId" id="userId" autocomplete>
+            </div>
+            <div class="comm_search_item">
+                <label for="realName">真实姓名</label>
+                <input type="text" name="realName" id="realName" autocomplete>
+            </div>
+            <div class="comm_search_item">
+                <label for="phoneNo">提现账号</label>
+                <input type="text" name="phoneNo" id="phoneNo" autocomplete>
+            </div>
+            <div class="cf"></div>
+            <div class="comm_search_item">
+                <label for="cashRmb">提现现金</label>
+                <input type="text" name="cashRmb" id="cashRmb" autocomplete>
+            </div>
+            <div class="comm_search_item verify_state">
+                <label for="status">提现状态</label>
+                <select name="status" id="status">
+                    <option value="" selected>全部</option>
+                    <option value="0">提交中</option>
+                    <option value="1">成功</option>
+                    <option value="-1">失败</option>
+                </select>
+            </div>
+            <button class="comm_search_item comm_button" id="shop_verify_search">搜索</button>
+        </div>
+        <div class="comm_table_content">
+            <ul class="comm_table_title">
+                <li class="col_type_2"><span>用户id</span></li>
+                <li class="col_type_5"><span>提现账号</span></li>
+                <li class="col_type_3"><span>真实姓名</span></li>
+                <li class="col_type_3"><span>联系号码</span></li>
+                <li class="col_type_3"><span>提现金额</span></li>
+                <li class="col_type_3"><span>提现时间</span></li>
+                <li class="col_type_2"><span>提现去向</span></li>
+                <li class="col_type_2"><span>提现状态</span></li>
+                <li class="col_type_5"><span>操作</span></li>
+            </ul>
+            <ul class="comm_table_raw" v-for="(shopItem,index) in shopList">
+                <li class="col_type_2"><span>{{shopItem.userId}}</span></li>
+                <li class="col_type_5"><span>{{shopItem.userAccount}}</span></li>
+                <li class="col_type_3"><span>{{shopItem.realName}}</span></li>
+                <li class="col_type_3"><span>{{shopItem.phoneNO}}</span></li>
+                <li class="col_type_3"><span>{{shopItem.cashRmb | trans-money}}</span></li>
+                <li class="col_type_3"><span>{{shopItem.commitTime | trans-date}}</span></li>
+                <li class="col_type_2"><span>{{shopItem.cashType | trans-cash-type}}</span></li>
+                <li class="col_type_2"><span>{{shopItem.stauts | trans-cash-status}}</span></li>
+                <li class="col_type_5 operate">
+                    <span :class="{hidden:isShowPass(shopItem.stauts)}"
+                          @click="showPassDialog(shopItem)">通过</span>
+                    <span :class="{hidden:isShowPass(shopItem.stauts)}"
+                          @click="showRefuseDialog(shopItem)">拒绝</span>
+                    <span @click="showDetailDialog(shopItem)">查看</span>
+                </li>
+            </ul>
+        </div>
+        <div class="comm_page">
+            <span>共{{countNum}}条,每页显示6条,共{{pagesCount}}页,当前为第{{currentPage}}页</span>
+
+            <div class="comm_pagination_control">
+                <ul>
+                    <li v-for="(pageItem,index) in pageArray"
+                        :class="{  'active': pageItem.isActive, 'page_hide': pageItem.isHidden  }"
+                        @click="jumpPage(pageItem)">{{pageItem.count}}
+                    </li>
+                </ul>
+                <div class="page_input">
+                    <label for="page_index">跳转:</label>
+                    <input type="text" name="page_index" id="page_index">
+                </div>
+                <button class="page_button">GO</button>
+            </div>
+        </div>
+    </div>
+    <div class="dialog_container" id="pass_dialog">
+        <div class="dialog">
+            <h1 class="dialog_title">确定要通过吗?</h1>
+            <span class="b_close">×</span>
+
+            <div class="button_container">
+                <button class="agree">确定</button>
+            </div>
+        </div>
+    </div>
+    <div class="dialog_container" id="refuse_dialog">
+        <div class="dialog">
+            <h1 class="dialog_title">确定要拒绝吗?</h1>
+            <span class="b_close">×</span>
+            <input type="text" placeholder="请输入拒绝原因" id="reject_value" maxlength="20">
+            <div class="button_container">
+                <button class="refuse">拒绝</button>
+            </div>
+        </div>
+    </div>
+    <div class="dialog_container" id="withdraw_dialog">
+        <div class="dialog accordion">
+            <h1 class="dialog_title">查看详情</h1>
+            <span class="b_close">×</span>
+            <p class="money">
+                <span>红豆数：{{detailItem.redbeanBalance}}</span>
+                <span>红豆币：{{detailItem.redbeanCoinBalance}}</span> <br>
+                <span>可用余额：{{detailItem.moneyBalance}}</span>
+                <span>交易中金额：{{detailItem.lockedMoneyBalance}}</span> <br>
+            </p>
+            <ul class="cf">
+                <li class="active order">订单</li>
+                <li class="gift">礼物</li>
+                <li class="capital">资金流动</li>
+                <li class="history">提现记录</li>
+            </ul>
+            <div class="orderList">
+                <ul class="comm_table_title">
+                    <li class="col_type_2"><span>购买用户</span></li>
+                    <li class="col_type_4"><span>最后修改时间</span></li>
+                    <li class="col_type_2"><span>订单金额</span></li>
+                    <li class="col_type_2"><span>订单状态</span></li>
+                </ul>
+                <ul class="comm_table_raw" v-for="(orderItem,index) in orderList">
+                    <li class="col_type_2"><span>{{orderItem.userId}}</span></li>
+                    <li class="col_type_4"><span>{{orderItem.orderTime | trans-date}}</span></li>
+                    <li class="col_type_2"><span>{{orderItem.orderAmount | trans-money}}</span></li>
+                    <li class="col_type_2"><span>{{orderItem.orderStatus | trans-order-status}}</span></li>
+                </ul>
+            </div>
+            <div class="giftList" style="display:none">
+                <ul class="comm_table_title">
+                    <li class="col_type_2"><span>送礼人ID</span></li>
+                    <li class="col_type_4"><span>送礼人名称</span></li>
+                    <li class="col_type_4"><span>送礼时间</span></li>
+                    <li class="col_type_2"><span>红豆币数量</span></li>
+                </ul>
+                <ul class="comm_table_raw" v-for="(orderItem,index) in orderList">
+                    <li class="col_type_2"><span>{{orderItem.fromUserId}}</span></li>
+                    <li class="col_type_4"><span>{{orderItem.fromUserName}}</span></li>
+                    <li class="col_type_4"><span>{{orderItem.giveAwayTime | trans-date}}</span></li>
+                    <li class="col_type_2"><span>{{orderItem.redBeanNum}}</span></li>
+                </ul>
+            </div>
+            <div class="capitalList" style="display:none">
+                <ul class="comm_table_title">
+                    <li class="col_type_2"><span>用户ID</span></li>
+                    <li class="col_type_4"><span>兑换值</span></li>
+                    <li class="col_type_2"><span>转换时间</span></li>
+                    <li class="col_type_2"><span>转换类型</span></li>
+                </ul>
+                <ul class="comm_table_raw" v-for="(orderItem,index) in orderList">
+                    <li class="col_type_2"><span>{{orderItem.recordId}}</span></li>
+                    <li class="col_type_4"><span>{{orderItem.exchangeValue}}</span></li>
+                    <li class="col_type_2"><span>{{orderItem.tradeTime | trans-date}}</span></li>
+                    <li class="col_type_2"><span>{{orderItem.convertType | trans-convert-type}}</span></li>
+                </ul>
+            </div>
+            <div class="historyList" style="display:none">
+                <ul class="comm_table_title">
+                    <li class="col_type_2"><span>提现账号</span></li>
+                    <li class="col_type_4"><span>提现时间</span></li>
+                    <li class="col_type_2"><span>提现金额</span></li>
+                    <li class="col_type_2"><span>提现去向</span></li>
+                    <li class="col_type_2"><span>提现状态</span></li>
+                </ul>
+                <ul class="comm_table_raw" v-for="(item,index) in orderList">
+                    <li class="col_type_2"><span>{{item.userAccount}}</span></li>
+                    <li class="col_type_4"><span>{{item.commitTime | trans-date}}</span></li>
+                    <li class="col_type_2"><span>{{item.cashRmb | trans-money}}</span></li>
+                    <li class="col_type_2"><span>{{item.cashType | trans-cash-type}}</span></li>
+                    <li class="col_type_2"><span>{{item.stauts | trans-cash-status}}</span></li>
+                </ul>
+            </div>
+            <div class="comm_page">
+                <span>共{{orderNum}}条,每页显示6条,共{{orderCount}}页,当前为第{{orderPage}}页</span>
+
+                <div class="comm_pagination_control">
+                    <ul>
+                        <li v-for="(pageItem,index) in orderPageArray" :class="{  'active': pageItem.isActive, 'page_hide': pageItem.isHidden  }"
+                            @click="jumpOrderPage(pageItem)">{{pageItem.count}}
+                        </li>
+                    </ul>
+                    <div class="page_input">
+                        <label for="page_index">跳转:</label>
+                        <input type="text" name="page_index" id="page_index2">
+                    </div>
+                    <button class="page_button">GO</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,23 @@
+<article class="chooseAddress" id="chooseAddress">
+    <section class="addressInfo" v-for="(address, index) in addressList">
+        <div class="border"></div>
+        <div class="content"  v-on:click="jump(address)">
+            <p>
+                <span v-cloak>{{address.receiveName}}</span>
+                <span v-cloak>{{address.receivePhone}}</span>
+            </p>
+            <span v-cloak>{{address.addressProvincesInfo}} {{address.addressCityInfo}} {{address.addressDistrictInfo}} {{address.addressStreet}}</span>
+        </div>
+        <div class="option">
+        	<div>
+        		<figure class="radio" v-bind:class="{active:address.defaulted}" v-on:click="setDefault(index,$event)"><img src="../img/opacity_tick.png"></figure>
+        		<span>默认地址</span>
+        	</div>
+	<div class="operate">
+		<figure class="edit" v-on:click="edit(address)"><img src="../img/edit.png"><span>编辑</span></figure>
+		<figure class="del" v-on:click="del(index,address.addressId)"><img src="../img/del.png"><span>删除</span></figure>
+	</div>
+        </div>
+    </section>
+    <button class="b_addAddress">添加地址</button>
+</article>

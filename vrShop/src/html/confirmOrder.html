@@ -1,0 +1,56 @@
+<article class="confirmOrder" id="confirmOrder">
+    <section class="addressInfo hidden">
+        <div class="border"></div>
+        <div class="content">
+            <p>
+                <span v-cloak>{{receiveName}}</span>
+                <span v-cloak>{{telphone}}</span>
+            </p>
+            <span v-cloak>{{defaultAddress}}</span>
+            <img src="../img/right_go.png">
+        </div>
+    </section>
+    <button class="con_addAddress hidden">点击添加收货地址</button>
+    <section>
+        <h2>
+            <figure>
+                <img v-bind:src="productImage">
+            </figure>
+            <span v-cloak>{{spaceName}}</span>
+        </h2>
+        <div class="pro">
+            <figure>
+                <img v-bind:src="productImage">
+            </figure>
+            <div>
+                <h4>{{productTitle}}</h4>
+                <h5>规格:{{sizeContent}}</h5>
+                <h6>¥<span>{{productPrice}}</span><span>×{{count}}</span></h6>
+            </div>
+        </div>
+        <div class="count">
+            <span>购买数量</span>
+            <div>
+                <span  v-on:click="reduce">-</span>
+                <input type="num" v-model = "count" v-on:change="suit">
+                <span v-on:click="plus">+</span>
+            </div>
+        </div>
+        <div>
+            <span>快递运费</span>
+            <span v-cloak>{{productFreight}} </span>
+        </div>
+        <div>
+            <span>价格合计</span>
+            <span v-cloak>¥{{allPrice}}</span>
+        </div>
+        <!-- <div class="mark">
+            <span>备注</span>
+            <span>请开发票,谢谢</span>
+        </div> -->
+    </section>
+    <section class="payBottom">
+        <span v-cloak>总计: ¥{{allPrice}}</span>
+        <button class="goChoosePayType">付款</button>
+    </section>
+</article>

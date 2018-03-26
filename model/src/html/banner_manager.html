@@ -1,0 +1,81 @@
+<div class="banner_manager comm_container">
+	<h1 class="comm_title">官网管理 >> 首页banner管理</h1>
+	<div class="comm_table">
+		<button class="add_button">添加</button>
+		<div class="comm_table_content">
+			<ul class="comm_table_title">
+				<li class="col_type_4"><span>内容</span></li>
+				<li class="col_type_4"><span>类型</span></li>
+				<li class="col_type_4"><span>修改时间</span></li>
+				<li class="col_type_3"><span>图片</span></li>
+				<li class="col_type_5 ellipses"><span>跳转地址</span></li>
+				<li class="col_type_4"><span>状态</span></li>
+				<li class="col_type_4"><span>排序</span></li>
+				<li class="col_type_5"><span>操作</span></li>
+			</ul>
+			<ul class="comm_table_raw"  v-for = "(banner,index) in bannerList">
+				<li class="col_type_4"><span>{{banner.bannerContent}}</span></li>
+				<li class="col_type_4"><span>{{banner.bannerType | trans-banner-type}}</span></li>
+				<li class="col_type_4"><span>{{banner.modifierTime | trans-date}}</span></li>
+				<li class="col_type_3"><img :src="$iconPic(banner.picturePath)" @click="$showBigPic($event)"></li>
+				<li class="col_type_5"><span class="ellipsis">{{banner.redirectUrl}}</span></li>
+				<li class="col_type_4"><span>{{banner.status | trans-banner-status}}</span></li>
+				<li class="col_type_4"><span>{{banner.orderNum}}</span></li>
+				<li class="col_type_5 operate"><span  @click="showDetailDialog(banner)">编辑</span><span  @click="showPassDialog(banner)">删除</span></li>
+			</ul>
+		</div>
+	</div>
+	<div class="dialog_container" id="detail_dialog">
+	    <div class="dialog">
+	    	    <h1 class="dialog_title">菜单</h1>
+		    <span class="b_close">×</span>
+		    <article class="input_article">
+		    	<span class="mistake"></span>
+		    	<section class="input_section"><label>广告内容:</label><input type="text" name="name" id="name" placeholder="不得为空"></section>
+		    	<section class="input_section"><label>跳转地址:</label><input type="text" name="url" id="url" placeholder="不得为空"></section>
+		    	<section class="input_section"><label>排序:</label><input type="number" name="menuOrder" id="menuOrder" placeholder="可以为空"></section>
+		    	<section class="input_section"><form id="uploadForm" enctype="multipart/form-data"><input type="file" name="file" id="file" class="uploadFile"></form></section>
+		    	<section class="input_section hidden"><input type="text" name="picId" id="picId"></section>
+		    	<section class="input_section">
+		    		<label>状态:</label>
+		    		<div class="comm_search_item verify_state">
+		    			<select name="statusShow" class="input_width_3" id="statusShow">
+		    			  <option value="1">可用</option>
+		    			  <option value="0">不可用</option>
+					</select>
+		    		</div>
+			</section>
+				<section class="input_section">
+					<label>类型:</label>
+					<div class="comm_search_item verify_state">
+						<select name="statusShow" class="input_width_3" id="redirectType">
+							<option value="1">H5网页</option>
+							<option value="2">APP页面</option>
+						</select>
+					</div>
+				</section>
+				<section class="input_section">
+					<label>banner类型:</label>
+					<div class="comm_search_item verify_state">
+						<select name="statusShow" class="input_width_3" id="bannerType">
+							<option value="1">首页</option>
+							<option value="2">其他</option>
+						</select>
+					</div>
+				</section>
+		    </article>
+		    <div class="button_container">
+		    	<button class="agree">确定</button>
+		    </div>
+	    </div>
+	</div>
+	<div class="dialog_container" id="pass_dialog">
+	    <div class="dialog">
+	    	    <h1 class="dialog_title">删除</h1>
+		    <span class="b_close">×</span>
+		    <div class="button_container">
+		    	<button class="agree">同意</button>
+		    </div>
+	    </div>
+	</div>
+</div>

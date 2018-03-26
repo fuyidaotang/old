@@ -1,0 +1,135 @@
+<div class="order_query comm_container">
+	<h1 class="comm_title">订单管理 >> 订单查询</h1>
+	<div class="comm_table">
+		<div class="comm_search_box">
+			<div class="comm_search_item">
+				<label for="userId">用户ID</label>
+				<input type="text" name="userId" id="userId" autocomplete >
+			</div>
+			<div class="comm_search_item">
+				<label for="spaceName">店铺名称</label>
+				<input type="text" name="spaceName" id="spaceName" autocomplete >
+			</div>
+			<div class="comm_search_item">
+				<label for="orderNumber">订单编号</label>
+				<input type="text" name="orderNumber" id="orderNumber" autocomplete >
+			</div>
+			<div class="comm_search_item verify_state" v-cloak>
+				<label for="status">订单状态</label>
+				<select name="status" class="status input_width_3" id="status">
+				  <option value="" selected>全部</option> 
+				  <option value="0">取消</option> 
+				  <option value="10">未付款</option> 
+				  <option value="20">未发货</option>
+				  <option value="30">已发货</option>
+				  <option value="40">待评论</option>
+				  <option value="50">已完成</option>
+				  <option value="-1">已删除</option>
+				</select>
+			</div>
+			<div class="cf"></div>
+			<div class="comm_search_item">
+				<label for="userPhone">手机号</label>
+				<input type="text" name="userPhone" id="userPhone" autocomplete >
+			</div>
+			<div class="comm_search_item">
+				<label for="beginTime">起始时间</label>
+				<input type="text" name="beginTime" class="flatpickr input_width_4" id="beginTime" autocomplete>
+			</div>
+			<div class="comm_search_item">
+				<label for="endTime">结束时间</label>
+				<input type="text" name="endTime" class="flatpickr input_width_4" id="endTime" autocomplete>
+			</div>
+			<button class="comm_search_item comm_button" id="shop_verify_search">搜索</button>
+		</div>
+		<div class="comm_table_content">
+			<ul class="comm_table_title">
+				<li class="col_type_2"><span>订单id</span></li>
+				<li class="col_type_5"><span>订单编号</span></li>
+				<li class="col_type_4"><span>订单时间</span></li>
+				<li class="col_type_3"><span>订单总额</span></li>
+				<li class="col_type_3"><span>购买用户</span></li>
+				<li class="col_type_3"><span>联系电话</span></li>
+				<li class="col_type_3"><span>快递公司</span></li>
+				<li class="col_type_3"><span>订单状态</span></li>
+				<li class="col_type_3"><span>操作</span></li>
+			</ul>
+			<ul class="comm_table_raw"  v-for = "(orderItem,index) in orderList">
+				<li class="col_type_2"><span>{{orderItem.orderId}}</span></li>
+				<li class="col_type_5"><span>{{orderItem.orderNumber}}</span></li>
+				<li class="col_type_4"><span>{{orderItem.orderTime | trans-date}}</span></li>
+				<li class="col_type_3"><span>{{orderItem.orderAmount | trans-money}}</span></li>
+				<li class="col_type_3"><span>{{orderItem.userName}}</span></li>
+				<li class="col_type_3"><span>{{orderItem.userPhone}}</span></li>
+				<li class="col_type_3"><span>{{orderItem.transportCompany}}</span></li>
+				<li class="col_type_3"><span>{{orderItem.orderStatus | trans-order-status}}</span></li>
+				<li class="col_type_3 operate"><span @click="showDetailDialog(orderItem)">查看</span><span  @click="showPassDialog(orderItem)">编辑</span></li>
+			</ul>
+		</div>
+		<div class="comm_page">
+			<span>共{{countNum}}条,每页显示6条,共{{pagesCount}}页,当前为第{{currentPage}}页</span>
+			<div class="comm_pagination_control">
+				<ul>
+					<li v-for = "(pageItem,index) in pageArray" :class="{  'active': pageItem.isActive, 'page_hide': pageItem.isHidden  }" @click = "jumpPage(pageItem)">{{pageItem.count}}</li>
+				</ul>
+				<div class="page_input">
+					<label for="page_index">跳转:</label>
+					<input type="text" name="page_index" id="page_index" >
+				</div>
+				<button class="page_button">GO</button>
+			</div>
+		</div>
+	</div>
+	<div class="dialog_container" id="detail_dialog">
+	    <div class="dialog">
+	    	    <h1 class="dialog_title">用户详情</h1>
+		    <span class="b_close">×</span>
+		    <article>
+		    	<section class="dialog_raw_1"><span>订单ID</span><div class="right_part">{{detailContent.orderId}}</div></section>
+		    	<section class="dialog_raw_2"><span>订单号</span><div class="right_part">{{detailContent.orderNumber}}</div></section>
+		    	<section class="dialog_raw_1"><span>订单时间</span><div class="right_part">{{detailContent.orderTime | trans-date}}</div></section>
+		    	<section class="dialog_raw_2"><span>订单总额</span><div class="right_part">{{detailContent.orderAmount | trans-money}}</div></section>
+		    	<section class="dialog_raw_1"><span>订单状态</span><div class="right_part">{{detailContent.orderStatus | trans-order-status}}</div></section>
+		    	<section class="dialog_raw_2"><span>订单邮费</span><div class="right_part">{{detailContent.orderPostage | trans-money}}</div></section>
+		    	<section class="dialog_raw_1"><span>店铺ID</span><div class="right_part">{{detailContent.spaceId}}</div></section>
+		    	<section class="dialog_raw_2"><span>店铺名称</span><div class="right_part">{{detailContent.spaceName}}</div></section>
+		    	<section class="dialog_raw_1"><span>购买用户ID</span><div class="right_part">{{detailContent.userId}}</div></section>
+		    	<section class="dialog_raw_2"><span>购买用户昵称</span><div class="right_part">{{detailContent.userName}}</div></section>
+		    	<section class="dialog_raw_1"><span>购买用户手机号</span><div class="right_part">{{detailContent.userPhone}}</div></section>
+		    	<section class="dialog_raw_2"><span>付款时间</span><div class="right_part">{{detailContent.payTime | trans-date}}</div></section>
+		    	<section class="dialog_raw_1"><span>产品总价</span><div class="right_part">{{detailContent.productsAmount | trans-money}}</div></section>
+		    	<section class="dialog_raw_2"><span>评价状态</span><div class="right_part">{{detailContent.evaluationState | trans-comment-status}}</div></section>
+		    	<section class="dialog_raw_1"><span>快递收件人</span><div class="right_part">{{detailContent.receiveName}}</div></section>
+		    	<section class="dialog_raw_2"><span>收货地址</span><div class="right_part">{{detailContent.receiveAddress}}</div></section>
+		    	<section class="dialog_raw_1"><span>收货人手机号</span><div class="right_part">{{detailContent.receivePhone}}</div></section>
+		    	<section class="dialog_raw_2"><span>买家订单备注</span><div class="right_part">{{detailContent.orderNote}}</div></section>
+		    	<section class="dialog_raw_1"><span>快递单号</span><div class="right_part">{{detailContent.transportNumber}}</div></section>
+		    	<section class="dialog_raw_2"><span>快递公司</span><div class="right_part">{{detailContent.transportCompany}}</div></section>
+		    	<section class="dialog_raw_1"><span>关键字</span><div class="right_part">{{detailContent.searchKey}}</div></section>
+		    </article>
+		    <div class="button_container">
+		    	<button class="agree">编辑</button>
+		    </div>
+	    </div>
+	</div>
+	<div class="dialog_container" id="pass_dialog">
+	    <div class="dialog">
+	    	    <h1 class="dialog_title">更改状态</h1>
+		    <span class="b_close">×</span>
+		    <article>
+		    	<section class="dialog_raw_4">
+			    	<label><input type="radio" name="varify_agree" value="0">取消</label>
+			    	<label><input type="radio" name="varify_agree" value="10">未付款</label>
+			    	<label><input type="radio" name="varify_agree" value="20">未发货</label>
+			    	<label><input type="radio" name="varify_agree" value="30">已发货</label>
+			    	<label><input type="radio" name="varify_agree" value="40">待评论</label>
+			    	<label><input type="radio" name="varify_agree" value="50">已完成</label>
+			    	<label><input type="radio" name="varify_agree" value="-1">已删除</label>
+			</section>
+		    </article>
+		    <div class="button_container">
+		    	<button class="agree">同意</button>
+		    </div>
+	    </div>
+	</div>
+</div>

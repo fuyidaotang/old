@@ -1,0 +1,111 @@
+<div class="vip_manager comm_container">
+    <h1 class="comm_title">代理商管理 >> 会员管理</h1>
+    <div class="comm_table">
+        <div class="comm_search_box">
+            <div class="comm_search_item">
+                <label for="agentName">代理商姓名</label>
+                <input type="text" name="agentName" id="agentName" class="input_width_2" autocomplete >
+            </div>
+            <div class="comm_search_item">
+                <label for="phone">联系方式</label>
+                <input type="text" class="input_width_3" name="phone" id="phone" autocomplete >
+            </div>
+            <div class="comm_search_item cascader">
+                <label for="areaId">地区</label>
+                <div class="case_container">
+                    <input type="text" class="input_width_3" name="areaId" id="areaId" :value="casValue.areaValue" readonly @click="isShowCse = true">
+                    <span class="clear_cas" @click="clear('casValue')">×</span>
+                    <div class="case_list" v-show="isShowCse">
+                        <div class="one_case cas">
+                            <ul>
+                                <li v-for="prov in areaInfo">
+                                    <span @click="chooseArea('casValue', prov,0)" :class="{'active':prov.active}">{{prov.areaName}}</span>
+                                    <div class="two_case cas" v-show="casValue.chosenAreas[0] && casValue.chosenAreas[0].length == 1 && prov.active">
+                                        <ul>
+                                            <li v-for="city in prov.childAreaList">
+                                                <span @click="chooseArea('casValue', city,1)" :class="{'active':city.active}">{{city.areaName}}</span>
+                                                <div class="three_case cas" v-show="casValue.chosenAreas[1] && casValue.chosenAreas[1].length == 1 && city.active">
+                                                    <ul>
+                                                        <li v-for="cou in city.childAreaList">
+                                                            <span @click="chooseArea('casValue', cou,2)" :class="{'active':cou.active}">{{cou.areaName}}</span>
+                                                        </li>
+                                                    </ul>
+                                                    <button @click="getAreaName('casValue', 2)">添加</button>
+                                                    <button @click="sure('casValue', 2)">确定</button>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        <button @click="getAreaName('casValue', 1)">添加</button>
+                                        <button @click="sure('casValue',1)">确定</button>
+                                    </div>
+                                </li>
+                            </ul>
+                            <button @click="getAreaName('casValue', 0)">添加</button>
+                            <button @click="sure('casValue',0)">确定</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="comm_search_item">
+                <label for="agNumber">代理商账号</label>
+                <input type="text" class="input_width_3" name="agNumber" id="agNumber" autocomplete >
+            </div>
+            <div class="cf"></div>
+            <button class="comm_search_item comm_button" @click="search">搜索</button>
+        </div>
+        <div class="comm_table_content">
+            <ul class="comm_table_title">
+                <li class="col_type_2"><span>id</span></li>
+                <li class="col_type_5"><span>姓名</span></li>
+                <li class="col_type_4"><span>联系方式</span></li>
+                <li class="col_type_3"><span>代理区域</span></li>
+                <li class="col_type_3"><span>账号</span></li>
+                <li class="col_type_3"><span>会员号个数</span></li>
+                <li class="col_type_3"><span>会员号总数</span></li>
+                <li class="col_type_3"><span>类型</span></li>
+                <li class="col_type_2"><span>等级</span></li>
+                <li class="col_type_3"><span>操作</span></li>
+            </ul>
+            <ul class="comm_table_raw"  v-for = "(agent,index) in vipList">
+                <li class="col_type_2"><span>{{agent.agentId}}</span></li>
+                <li class="col_type_5"><span>{{agent.agAgentName}}</span></li>
+                <li class="col_type_4"><span>{{agent.agPhone}}</span></li>
+                <li class="col_type_3"><span>{{agent.areaName || '全国'}}</span></li>
+                <li class="col_type_3"><span>{{agent.agNumber}}</span></li>
+                <li class="col_type_3"><span>{{agent.vipNumber}}</span></li>
+                <li class="col_type_3"><span>{{agent.vipNumSum}}</span></li>
+                <li class="col_type_3"><span>{{agent.agentType | trans-agent-type}}</span></li>
+                <li class="col_type_2"><span>{{agent.agentLevel | trans-level-type}}</span></li>
+                <li class="col_type_3 operate"><span @click="add(agent.agentId)">添加</span></li>
+            </ul>
+        </div>
+        <div class="comm_page">
+            <span>共{{countNum}}条,每页显示6条,共{{pagesCount}}页,当前为第{{currentPage}}页</span>
+            <div class="comm_pagination_control">
+                <ul>
+                    <li v-for = "(pageItem,index) in pageArray" :class="{  'active': pageItem.isActive, 'page_hide': pageItem.isHidden  }" @click = "jumpPage(pageItem.count)">{{pageItem.count}}</li>
+                </ul>
+                <div class="page_input">
+                    <label for="page_index">跳转:</label>
+                    <input type="text" name="page_index" id="page_index" v-model="targetPage">
+                </div>
+                <button class="page_button" @click="jumpPage(targetPage)">GO</button>
+            </div>
+        </div>
+    </div>
+    <div class="dialog_container" id="detail_dialog">
+        <div class="dialog">
+            <h1 class="dialog_title">添加账号</h1>
+            <span class="b_close">×</span>
+            <article class="input_article">
+                <span class="mistake"></span>
+                <input type="hidden" id="picId">
+                <section class="input_section"><label>会员个数:</label><input type="text" name="count" id="count" placeholder="不得为空"></section>
+                <section class="input_section"><form id="uploadForm" enctype="multipart/form-data"><input type="file" name="file" id="file" class="uploadFile"></form></section>
+            </article>
+            <div class="button_container">
+                <button class="agree">确定</button>
+            </div>
+        </div>
+    </div>
+</div>

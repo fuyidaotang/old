@@ -1,0 +1,85 @@
+<div class="cateList comm_container" v-cloak>
+    <h1 class="comm_title">APP首页管理 >> 推荐分类管理</h1>
+    <div class="comm_table">
+        <button class="add_button">添加</button>
+        <div class="comm_table_content">
+            <ul class="comm_table_title">
+                <li class="col_type_2"><span>id</span></li>
+                <li class="col_type_3"><span>封面</span></li>
+                <li class="col_type_4"><span>推荐类名</span></li>
+                <li class="col_type_3"><span>分类名</span></li>
+                <li class="col_type_3"><span>状态</span></li>
+                <li class="col_type_3"><span>发布日期</span></li>
+                <li class="col_type_3"><span>排序</span></li>
+                <li class="col_type_5"><span>操作</span></li>
+            </ul>
+            <ul class="comm_table_raw" v-for="(cateItem,index) in cateList">
+                <li class="col_type_2"><span class="ellipsis">{{cateItem.classifyId}}</span></li>
+                <li class="col_type_3"><img :src="$iconPic(cateItem.picturePath)" @click="$showBigPic($event)"></li>
+                <li class="col_type_4"><span>{{cateItem.classifyTitle}}</span></li>
+                <li class="col_type_3"><span>{{cateItem.classifyName}}</span></li>
+                <li class="col_type_3"><span>{{cateItem.status | trans-recommend-status}}</span></li>
+                <li class="col_type_3"><span>{{cateItem.editTime | trans-date}}</span></li>
+                <li class="col_type_3"><span>{{cateItem.sortNum}}</span></li>
+                <li class="col_type_5 operate"><span
+                        @click="showEditDialog(cateItem)">编辑</span><span
+                        @click="delItem(cateItem.classifyId)">删除</span></li>
+            </ul>
+        </div>
+    </div>
+    <div class="dialog_container" id="detail_dialog">
+        <div class="dialog">
+            <h1 class="dialog_title">菜单</h1>
+            <span class="b_close">×</span>
+            <article>
+                <span class="mistake"></span>
+                <section class="input_section" v-show="!isEdit">
+                    <label>分类:</label>
+                    <div class="comm_search_item classifyId">
+                        <select name="classifyId" class="input_width_3" id="classifyId">
+                            <option v-for="column in columnList" :value="column.classifyId">{{column.classifyName}}</option>
+                        </select>
+                    </div>
+                </section>
+                <section class="input_section"><label>推荐名称:</label><input type="text" name="classifyTitle" id="classifyTitle" placeholder="不得为空"></section>
+                <section class="input_section"><label>排序:</label><input type="number" name="sortNum" id="sortNum" placeholder="可以为空"></section>
+                <form id="uploadForm">
+                    <section class="input_section">
+                        <label for="file">上传封面</label>
+                        <img id="picShow" src="../img/timg.png">
+                        <br>
+                        <input type="file" name="file" id="file" class="uploadFile">
+                        <input type="text" name="picId" id="picId" class="hidden">
+                    </section>
+                </form>
+                <section class="input_section">
+                    <label>状态:</label>
+                    <div class="comm_search_item verify_state">
+                        <select name="statusShow" class="input_width_3" id="status">
+                            <option value="1">可用</option>
+                            <option value="0">不可用</option>
+                        </select>
+                    </div>
+                </section>
+            </article>
+            <div class="button_container">
+                <button class="agree">确定</button>
+            </div>
+        </div>
+    </div>
+    <div class="dialog_container" id="pass_dialog">
+        <div class="dialog">
+            <h1 class="dialog_title">更改状态</h1>
+            <span class="b_close">×</span>
+            <article class="input_article">
+                <section class="input_section">
+                    <label>店铺评分:</label>
+                    <input type="text" name="spaceScore" id="spaceScore">
+                </section>
+            </article>
+            <div class="button_container">
+                <button class="agree">同意</button>
+            </div>
+        </div>
+    </div>
+</div>

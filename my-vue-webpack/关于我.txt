@@ -1,0 +1,2 @@
+﻿login.js,login.html,app.js submitGoods.vue,;
+下载依赖后，把video-js-flash 中的package.json里的main， videojs-flash.cjs.js --> videojs-flash.min.js

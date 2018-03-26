@@ -1,0 +1,59 @@
+<div class="live_tag comm_container">
+    <h1 class="comm_title">直播管理 >> 直播标签管理</h1>
+    <div class="comm_table">
+        <div class="comm_add_box">
+            <button class="addTag_button fr" @click="updateTag()">添加</button>
+        </div>
+        <div class="comm_table_content">
+            <ul class="comm_table_title">
+                <li class="col_type_4"><span>标签id</span></li>
+                <li class="col_type_4"><span>标签名称</span></li>
+                <li class="col_type_4"><span>标签状态</span></li>
+                <li class="col_type_5"><span>操作</span></li>
+            </ul>
+        </div>
+        <div class="comm_table_content">
+            <ul class="comm_table_raw"  v-for = "(tagItem,index) in tagList">
+                <li class="col_type_4"><span>{{tagItem.tagId}}</span></li>
+                <li class="col_type_4"><span>{{tagItem.tagName}}</span></li>
+                <li class="col_type_4"><span>{{tagItem.tagStatus | trans-tag-status}}</span></li>
+
+                <li class="col_type_5 operate">
+                    <span  @click="updateTag(tagItem)">修改</span>
+                    <span  @click="delTag(tagItem)">删除</span>
+                </li>
+            </ul>
+        </div>
+        <div class="dialog_container" id="detail_dialog">
+            <div class="dialog">
+                <h1 class="dialog_title">菜单</h1>
+                <span class="b_close">×</span>
+                <article class="input_article">
+                    <span class="mistake"></span>
+                    <section class="input_section"><label>标签名称:</label><input type="text" name="tagName" id="tagName" placeholder="不得为空"></section>
+                    <section class="input_section">
+                        <label>状态:</label>
+                        <div class="comm_search_item verify_state">
+                            <select name="statusShow" class="input_width_3" id="statusShow">
+                                <option value="1">可用</option>
+                                <option value="0">不可用</option>
+                            </select>
+                        </div>
+                    </section>
+                </article>
+                <div class="button_container">
+                    <button class="agree">确定</button>
+                </div>
+            </div>
+        </div>
+        <div class="dialog_container" id="pass_dialog">
+            <div class="dialog">
+                <h1 class="dialog_title">删除</h1>
+                <span class="b_close">×</span>
+                <div class="button_container">
+                    <button class="agree">同意</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,91 @@
+<div class="wechat_manager comm_container" v-cloak>
+	<h1 class="comm_title">商户管理 >> 微信认证管理</h1>
+	<div class="comm_table">
+		<div class="comm_search_box">
+			<div class="comm_search_item">
+				<label for="SpaceNum">店铺号</label>
+				<input type="text" name="SpaceNum" id="SpaceNum" autocomplete >
+			</div>
+			<div class="comm_search_item">
+				<label for="attention">联系人</label>
+				<input type="text" name="attention" id="attention" autocomplete>
+			</div>
+			<div class="comm_search_item">
+				<label for="contact">联系方式</label>
+				<input type="text" name="contact" id="contact" autocomplete>
+			</div>
+			<div class="cf"></div>
+			<div class="comm_search_item verify_state">
+				<label for="wapStatus">审核状态</label>
+				<select name="wapStatus" class="wapStatus" id="wapStatus">
+				  <option value="" selected>全部</option> 
+				  <option value="0">待审核</option> 
+				  <option value="1">审核中</option>
+				  <option value="2">审核通过</option>
+				  <option value="3">拒绝</option>
+				</select>
+			</div>
+			<button class="comm_search_item comm_button" id="shop_verify_search">搜索</button>
+		</div>
+		<div class="comm_table_content">
+			<ul class="comm_table_title">
+				<li class="col_type_2"><span>店铺号</span></li>
+				<li class="col_type_4"><span>商铺名称</span></li>
+				<li class="col_type_2"><span>联系人</span></li>
+				<li class="col_type_3"><span>联系号码</span></li>
+				<li class="col_type_3"><span>商铺类型</span></li>
+				<li class="col_type_2"><span>粉丝数</span></li>
+				<li class="col_type_3"><span>提交时间</span></li>
+				<li class="col_type_2"><span>审核状态</span></li>
+				<li class="col_type_3"><span>背景图</span></li>
+				<li class="col_type_4"><span>操作</span></li>
+			</ul>
+			<ul class="comm_table_raw"  v-for = "(shopItem,index) in shopList">
+				<li class="col_type_2"><span>{{shopItem.spaceNum}}</span></li>
+				<li class="col_type_4"><span>{{shopItem.wapName}}</span></li>
+				<li class="col_type_2"><span>{{shopItem.contactName}}</span></li>
+				<li class="col_type_3"><span>{{shopItem.contactPhone}}</span></li>
+				<li class="col_type_3"><span>{{shopItem.wapClassify}}</span></li>
+				<li class="col_type_2"><span>{{shopItem.wapFans}}</span></li>
+				<li class="col_type_3"><span>{{shopItem.commitTime | trans-date}}</span></li>
+				<li class="col_type_2"><span>{{shopItem.wapStatus | trans-wechat-status}}</span></li>
+				<li class="col_type_3"><img :src="$iconPic(shopItem.picPath)" @click="$showBigPic($event)"></li>
+				<li class="col_type_4 operate"><span :class="{hidden:isShowPass(shopItem.wapStatus)}" @click="showPassDialog(shopItem)">通过</span><span :class="{hidden:isShowPass(shopItem.wapStatus)}"  @click="showRefuseDialog(shopItem)">拒绝</span></li>
+			</ul>
+		</div>
+		<div class="comm_page">
+			<span>共{{countNum}}条,每页显示6条,共{{pagesCount}}页,当前为第{{currentPage}}页</span>
+			<div class="comm_pagination_control">
+				<ul>
+					<li v-for = "(pageItem,index) in pageArray" :class="{  'active': pageItem.isActive, 'page_hide': pageItem.isHidden  }" @click = "jumpPage(pageItem)">{{pageItem.count}}</li>
+				</ul>
+				<div class="page_input">
+					<label for="page_index">跳转:</label>
+					<input type="text" name="page_index" id="page_index" >
+				</div>
+				<button class="page_button">GO</button>
+			</div>
+		</div>
+	</div>
+	<div class="dialog_container" id="pass_dialog">
+	    <div class="dialog">
+	    	    <h1 class="dialog_title">审核通过</h1>
+		    <span class="b_close">×</span>
+		    <div class="button_container">
+		    	<button class="agree">确定</button>
+		    </div>
+	    </div>
+	</div>
+	<div class="dialog_container" id="refuse_dialog">
+	    <div class="dialog">
+	    	    <h1 class="dialog_title">拒绝理由</h1>
+		    <span class="b_close">×</span>
+		    <article>
+		    	<textarea placeholder="请输入拒绝理由,300字内" maxlength="300"></textarea>
+		    </article>
+		    <div class="button_container">
+		    	<button class="refuse">拒绝</button>
+		    </div>
+	    </div>
+	</div>
+</div>

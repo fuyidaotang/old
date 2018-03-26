@@ -1,0 +1,69 @@
+<div class="comm_container add_active_user">
+    <h1 class="comm_title">营销活动 >> 网红海选 >> 添加网红 <span class="right">今日分享抽奖：{{eventInfo.shareTimes}}次，共计{{eventInfo.shareAmount}}元 今日网红登录人数：{{eventInfo.loginNum}}人</span></h1>
+    <div class="container">
+        <ul class="search_head">
+            <li><span>手机号</span><input type="text" v-model="phone"></li>
+            <li><span>店铺名称</span><input type="text" v-model="spaceName"></li>
+            <li><span>用户昵称</span><input type="text" v-model="userName"></li>
+            <li><span>店铺ID</span><input type="text" v-model="spaceId"></li>
+            <li><button @click="search" class="search_btn">搜索</button></li>
+        </ul>
+        <table class="red_list">
+            <thead>
+             <tr>
+                 <td>店铺ID</td>
+                 <td>店铺名称</td>
+                 <td>用户昵称</td>
+                 <td>性别</td>
+                 <td>认证姓名</td>
+                 <td>手机号</td>
+                 <td>认证类型</td>
+                 <td>注册时间</td>
+                 <td>登陆方式</td>
+                 <td>状态</td>
+                 <td>操作</td>
+            </tr>
+            </thead>
+            <tbody v-if="tableData.length>0">
+            <tr v-for="(list,index) in tableData">
+                <td>{{list.spaceNum}}</td>
+                <td>{{list.spaceName}}</td>
+                <td>{{list.userName}}</td>
+                <td>{{list.sex}}</td>
+                <td>{{list.verifyName?list.verifyName:'无'}}</td>
+                <td>{{list.phoneNo}}</td>
+                <td v-if="list.verifyType==1">实名认证</td>
+                <td v-if="list.verifyType==2">实体店认证</td>
+                <td v-if="list.verifyType==3">全景店认证</td>
+                <td v-if="list.verifyType==4">网络红人</td>
+                <td v-if="list.verifyType==5">海外买手</td>
+                <td v-if="list.verifyType==6">实力工厂</td>
+                <td v-if="list.verifyType==7">源头好货</td>
+                <td v-if="list.verifyType==8">旗舰店</td>
+                <td v-if="!list.verifyType">无</td>
+                <td v-if="list.registerDate">{{list.registerDate | trans-date}}</td>
+                <td v-else>--</td>
+                <td v-if="list.registerType==0">手机注册</td>
+                <td v-if="list.registerType==1">QQ注册</td>
+                <td v-if="list.registerType==2">微信注册</td>
+                <td v-if="list.registerType==3">微博注册</td>
+                <td v-if="list.registerType==98">携聘注册</td>
+                <td v-if="list.registerType==99">虚拟账号</td>
+                <td v-if="list.status==0">正常</td>
+                <td v-if="list.status==1">不可用</td>
+                <td v-if="list.isDraftUser==0"><button class="add" @click="showAddBox(list,index)">加入网红库</button></td>
+                <td v-else><button class="add" style="background: #ececec;" disabled>已加入</button></td>
+            </tr>
+            </tbody>
+        </table>
+        <p v-if="noList" style="margin-top:30px;width:100%;text-align: center;font-size: 16px;color:#5c5c5c;font-family: '黑体'">暂未查询到数据</p>
+    </div>
+    <div v-if="addShow" class="dio_box">
+        <div class="title">请输入网红姓名</div>
+        <div class="text"><span>网红姓名:</span><input type="text" class="name" placeholder="请输入网红姓名"  v-model="verifyName"></div>
+        <div class="btn">
+            <button class="chanl" @click="hideAdd">取消加入网红库</button>
+            <button class="action" @click="addUser">确认加入网红库</button>
+        </div>
+    </div>
+</div>

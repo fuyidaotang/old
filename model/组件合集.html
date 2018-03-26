@@ -1,0 +1,37 @@
+// 弹出框
+<div class="dialog_container" id="detail_dialog">
+        <div class="dialog">
+            <h1 class="dialog_title">菜单</h1>
+            <span class="b_close">×</span>
+            <article class="input_article">
+                <span class="mistake"></span>
+                //普通
+                <section class="input_section"><label>广告内容:</label><input type="text" name="name" id="name" placeholder="不得为空"></section>
+                //图片
+                <section class="input_section"><form id="uploadForm" enctype="multipart/form-data"><input type="file" name="file" id="file" class="uploadFile"></form></section>
+                <section class="input_section hidden"><input type="text" name="picId" id="picId"></section>
+                //下拉列表
+                <section class="input_section">
+                    <label>状态:</label>
+                    <div class="comm_search_item verify_state">
+                        <select name="statusShow" class="input_width_3" id="statusShow">
+                            <option value="1">可用</option>
+                            <option value="0">不可用</option>
+                        </select>
+                    </div>
+                </section>
+            </article>
+            <div class="button_container">
+                <button class="agree">确定</button>
+            </div>
+        </div>
+    </div>
+<div class="dialog_container" id="pass_dialog">
+    <div class="dialog">
+        <h1 class="dialog_title">删除</h1>
+        <span class="b_close">×</span>
+        <div class="button_container">
+            <button class="agree">同意</button>
+        </div>
+    </div>
+</div>

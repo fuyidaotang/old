@@ -1,0 +1,61 @@
+<div class="auth_manager comm_container" v-cloak>
+	<h1 class="comm_title">系统管理 >> 系统权限</h1>
+	<div class="comm_table">
+		<div class="tree_root">
+			<div class="tree_1" v-for="authItemOne in authList">
+				<h1><span class="mult" @click="slideDownUp($event)">-</span>{{authItemOne.menuName}}</h1>
+				<div class="trees">
+					<div class="tree_2" v-for="authItemTwo in authItemOne.children">
+						<s class="tree_line"></s>
+						<h2><span class="mult" @click="slideDownUp">-</span>{{authItemTwo.menuName}}<button @click = "addAuth(authItemTwo)">添加</button></h2>
+						<div class="trees">
+							<div class="tree_3" v-for="authItemThree in authItemTwo.permission">
+								<s class="tree_line"></s>
+								<section><span class="fl">{{authItemThree.permissionName}}</span><div class="fr"><span @click = "editAuth(authItemThree,authItemTwo.menuId)">编辑</span><span>删除</span></div></section>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="dialog_container" id="auth_dialog">
+	    <div class="dialog">
+	    	    <h1 class="dialog_title">权限</h1>
+		    <span class="b_close">×</span>
+		    <article class="input_article">
+		    	<span class="mistake"></span>
+		    	<section class="input_section"><label>权限名称:</label><input type="text" name="authName" id="authName" placeholder="不得为空"></section>
+		    	<section class="input_section"><label>权限动作值:</label><input type="number" name="authAction" id="authAction" placeholder="不得为空"></section>
+		    	<section class="input_section"><label>权限地址:</label><input type="text" name="authUrl" placeholder="可以为空" id="authUrl"></section>
+		    	<section class="input_section" id="status">
+		    		<label class="flex_label">正常:<input type="radio" name="status" value="0" checked></label>
+			    	<label class="flex_label">不可用:<input type="radio" name="status" value="1"></label>
+			</section>
+		    </article>
+		    <div class="button_container">
+		    	<button class="agree">确定</button>
+		    </div>
+	    </div>
+	</div>
+	<div class="dialog_container" id="pass_dialog">
+	    <div class="dialog">
+	    	    <h1 class="dialog_title">更改状态</h1>
+		    <span class="b_close">×</span>
+		    <article>
+		    	<section class="dialog_raw_4">
+			    	<label><input type="radio" name="varify_agree" value="0">取消</label>
+			    	<label><input type="radio" name="varify_agree" value="10">未付款</label>
+			    	<label><input type="radio" name="varify_agree" value="20">未发货</label>
+			    	<label><input type="radio" name="varify_agree" value="30">已发货</label>
+			    	<label><input type="radio" name="varify_agree" value="40">待评论</label>
+			    	<label><input type="radio" name="varify_agree" value="50">已完成</label>
+			    	<label><input type="radio" name="varify_agree" value="-1">已删除</label>
+			</section>
+		    </article>
+		    <div class="button_container">
+		    	<button class="agree">同意</button>
+		    </div>
+	    </div>
+	</div>
+</div>

@@ -1,0 +1,173 @@
+<div class="order_apply comm_container">
+    <h1 class="comm_title">订单管理 >> 退货申请</h1>
+    <div class="comm_table">
+        <!--搜索-->
+        <div class="comm_search_box">
+            <div class="comm_search_item">
+                <label for="orderNumber">订单编号</label>
+                <input type="text" name="orderNumber" id="orderNumber" autocomplete >
+            </div>
+            <div class="comm_search_item verify_state" v-cloak>
+                <label for="LockOrderStatus">订单锁定状态</label>
+                <select name="LockOrderStatus" class="status input_width_3" id="LockOrderStatus">
+                    <option value="" selected>全部</option>
+                    <option value="1">不用锁定</option>
+                    <option value="2">需要锁定</option>
+                </select>
+            </div>
+            <div class="comm_search_item verify_state" v-cloak>
+                <label for="orderStatus">订单当前状态</label>
+                <select name="orderStatus" class="status input_width_3" id="orderStatus">
+                    <option value="" selected>全部</option>
+                    <option value="10">待发货</option>
+                    <option value="20">待收货</option>
+                    <option value="30">未收到</option>
+                    <option value="40">已收货</option>
+                    <option value="50">已评价</option>
+                </select>
+            </div>
+            <div class="cf"></div>
+            <div class="comm_search_item verify_state" v-cloak>
+                <label for="refundStatus">退款状态</label>
+                <select name="refundStatus" class="status input_width_3" id="refundStatus">
+                    <option value="" selected>全部</option>
+                    <option value="1">处理中</option>
+                    <option value="2">待管理员处理</option>
+                    <option value="3">已完成</option>
+                </select>
+            </div>
+            <div class="comm_search_item">
+                <label for="spaceId">店铺ID</label>
+                <input type="text" name="spaceId" class="input_width_4" id="spaceId" autocomplete>
+            </div>
+            <button class="comm_search_item comm_button" id="shop_verify_search">搜索</button>
+        </div>
+        <!--显示列表-->
+        <div class="comm_table_content">
+            <ul class="comm_table_title">
+                <li class="col_type_2"><span>申诉ID</span></li>
+                <li class="col_type_2"><span>退款申请ID</span></li>
+                <li class="col_type_5"><span>申诉原因</span></li>
+                <li class="col_type_4"><span>提交时间</span></li>
+                <li class="col_type_3"><span>商家ID</span></li>
+                <li class="col_type_2"><span>申诉ID</span></li>
+                <li class="col_type_3"><span>申诉金额</span></li>
+                <li class="col_type_6"><span>操作</span></li>
+            </ul>
+            <ul class="comm_table_raw"  v-for = "(appealItem,index) in refundAppealList">
+                <li class="col_type_2"><span>{{appealItem.appealId}}</span></li>
+                <li class="col_type_2"><span>{{appealItem.refundId}}</span></li>
+                <li class="col_type_5"><span>{{appealItem.reason}}</span></li>
+                <li class="col_type_4"><span>{{appealItem.commitTime | trans-date}}</span></li>
+                <li class="col_type_3"><span>{{appealItem.touserId}}</span></li>
+                <li class="col_type_2"><span>{{appealItem.userId}}</span></li>
+                <li class="col_type_3"><span>{{appealItem.amount | trans-money}}</span></li>
+                <li class="col_type_6 operate">
+                    <span @click="showRefundReturn(appealItem)">退款信息</span>
+                    <span @click="showDetailDialog(appealItem)">订单信息</span>
+                    <span @click="showPassDialog(appealItem)">编辑</span>
+                </li>
+            </ul>
+        </div>
+        <!--页码-->
+        <div class="comm_page">
+            <span>共{{countNum}}条,每页显示6条,共{{pagesCount}}页,当前为第{{currentPage}}页</span>
+            <div class="comm_pagination_control">
+                <ul>
+                    <li v-for = "(pageItem,index) in pageArray" :class="{  'active': pageItem.isActive, 'page_hide': pageItem.isHidden  }" @click = "jumpPage(pageItem)">{{pageItem.count}}</li>
+                </ul>
+                <div class="page_input">
+                    <label for="page_index">跳转:</label>
+                    <input type="text" name="page_index" id="page_index" >
+                </div>
+                <button class="page_button">GO</button>
+            </div>
+        </div>
+    </div>
+    <!--退货详情弹出框-->
+    <div class="dialog_container" id="detail_return">
+        <div class="dialog">
+            <h1 class="dialog_title">退款详情</h1>
+            <span class="b_close">×</span>
+            <article>
+                <section class="dialog_raw_1"><span>退款ID</span><div class="right_part">{{detailReturn.refundId}}</div></section>
+                <section class="dialog_raw_2"><span>退款号</span><div class="right_part">{{detailReturn.refundNum}}</div></section>
+                <section class="dialog_raw_1"><span>店铺ID</span><div class="right_part">{{detailReturn.spaceId}}</div></section>
+                <section class="dialog_raw_2"><span>店铺名称</span><div class="right_part">{{detailReturn.spaceName}}</div></section>
+                <section class="dialog_raw_1"><span>申诉用户ID</span><div class="right_part">{{detailReturn.userId}}</div></section>
+                <section class="dialog_raw_2"><span>申诉用户名称</span><div class="right_part">{{detailReturn.userName}}</div></section>
+                <section class="dialog_raw_1"><span>退款金额</span><div class="right_part">{{detailReturn.refundAmount | trans-money}}</div></section>
+                <section class="dialog_raw_2"><span>订单商品类型</span><div class="right_part">{{detailReturn.orderGoodsType | trans-goods-type}}</div></section>
+                <section class="dialog_raw_1"><span>申请类型</span><div class="right_part">{{detailReturn.refundType | trans-refuse-status}}</div></section>
+                <section class="dialog_raw_2"><span>卖家处理状态</span><div class="right_part">{{detailReturn.sellerStatus | trans-seller-status}}</div></section>
+                <section class="dialog_raw_1"><span>申请状态</span><div class="right_part">{{detailReturn.refundStatus | trans-refuse-status}}</div></section>
+                <section class="dialog_raw_2"><span>退货类型</span><div class="right_part">{{detailReturn.returnType | trans-return-type}}</div></section>
+                <section class="dialog_raw_1"><span>订单锁定类型</span><div class="right_part">{{detailReturn.orderLock | trans-order-lock}}</div></section>
+                <section class="dialog_raw_2"><span>物流状态</span><div class="right_part">{{detailReturn.orderStatus | trans-order-status}}</div></section>
+                <section class="dialog_raw_1"><span>添加时间</span><div class="right_part">{{detailReturn.addTime | trans-date}}</div></section>
+                <section class="dialog_raw_2"><span>卖家处理时间</span><div class="right_part">{{detailReturn.sellerTime | trans-date}}</div></section>
+                <section class="dialog_raw_1"><span>申请原因</span><div class="right_part">{{detailReturn.buyerMessage}}</div></section>
+                <section class="dialog_raw_2"><span>卖家备注</span><div class="right_part">{{detailReturn.sellerMessage}}</div></section>
+                <section class="dialog_raw_1"><span>物流公司</span><div class="right_part">{{detailReturn.expressName==0?'':detailReturn.expressName}}</div></section>
+                <section class="dialog_raw_2"><span>发货时间</span><div class="right_part">{{detailReturn.shipTime | trans-date}}</div></section>
+                <section class="dialog_raw_1"><span>收货时间</span><div class="right_part">{{detailReturn.receiveTime | trans-date}}</div></section>
+                <section class="dialog_raw_2"><span>管理员处理时间</span><div class="right_part">{{detailReturn.adminTime | trans-date}}</div></section>
+                <section class="dialog_raw_1"><span>管理员备注</span><div class="right_part">{{detailReturn.adminMessage}}</div></section>
+            </article>
+            <div class="button_container">
+                <button class="agree">编辑</button>
+            </div>
+        </div>
+    </div>
+    <!--订单详情弹出框-->
+    <div class="dialog_container" id="detail_dialog">
+        <div class="dialog">
+            <h1 class="dialog_title">订单详情</h1>
+            <span class="b_close">×</span>
+            <article>
+                <section class="dialog_raw_1"><span>订单ID</span><div class="right_part">{{detailContent.orderId}}</div></section>
+                <section class="dialog_raw_2"><span>订单号</span><div class="right_part">{{detailContent.orderNumber}}</div></section>
+                <section class="dialog_raw_1"><span>订单时间</span><div class="right_part">{{detailContent.orderTime | trans-date}}</div></section>
+                <section class="dialog_raw_2"><span>订单金额</span><div class="right_part">{{detailContent.orderAmount | trans-money}}</div></section>
+                <section class="dialog_raw_1"><span>订单状态</span><div class="right_part">{{detailContent.orderStatus | trans-order-status}}</div></section>
+                <section class="dialog_raw_2"><span>订单邮费</span><div class="right_part">{{detailContent.orderPostage | trans-money}}</div></section>
+                <section class="dialog_raw_1"><span>店铺ID</span><div class="right_part">{{detailContent.spaceId}}</div></section>
+                <section class="dialog_raw_2"><span>店铺名称</span><div class="right_part">{{detailContent.spaceName}}</div></section>
+                <section class="dialog_raw_1"><span>购买用户ID</span><div class="right_part">{{detailContent.userId}}</div></section>
+                <section class="dialog_raw_2"><span>购买用户昵称</span><div class="right_part">{{detailContent.userName}}</div></section>
+                <section class="dialog_raw_1"><span>购买用户手机号</span><div class="right_part">{{detailContent.userPhone}}</div></section>
+                <section class="dialog_raw_1"><span>产品总价</span><div class="right_part">{{detailContent.productsAmount | trans-money}}</div></section>
+                <section class="dialog_raw_2"><span>评价状态</span><div class="right_part">{{detailContent.evaluationState | trans-comment-status}}</div></section>
+                <section class="dialog_raw_1"><span>快递收件人</span><div class="right_part">{{detailContent.receiveName}}</div></section>
+                <section class="dialog_raw_2"><span>收货地址</span><div class="right_part">{{detailContent.receiveAddress}}</div></section>
+                <section class="dialog_raw_1"><span>收货人手机号</span><div class="right_part">{{detailContent.receivePhone}}</div></section>
+                <section class="dialog_raw_2"><span>买家订单备注</span><div class="right_part">{{detailContent.orderNote}}</div></section>
+                <section class="dialog_raw_1"><span>快递单号</span><div class="right_part">{{detailContent.transportNumber}}</div></section>
+                <section class="dialog_raw_2"><span>快递公司</span><div class="right_part">{{detailContent.transportCompany}}</div></section>
+                <section class="dialog_raw_1"><span>关键字</span><div class="right_part">{{detailContent.searchKey}}</div></section>
+            </article>
+            <div class="button_container">
+                <button class="agree">编辑</button>
+            </div>
+        </div>
+    </div>
+    <!--操作弹出框-->
+    <div class="dialog_container" id="pass_dialog">
+        <div class="dialog">
+            <h1 class="dialog_title">确认退款</h1>
+            <span class="b_close">×</span>
+            <article>
+                <section class="dialog_raw_4">
+                    <label><input type="radio" name="varify_agree" value="0">同意退款</label>
+                    <label><input type="radio" name="varify_agree" value="10">拒绝退款</label>
+                </section>
+                <label>请输入处理意见<textarea cols="20" rows="10"></textarea></label>
+
+            </article>
+
+            <div class="button_container">
+                <button class="agree">确定</button>
+            </div>
+        </div>
+    </div>
+</div>

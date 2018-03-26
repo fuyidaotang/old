@@ -1,0 +1,231 @@
+<div class="agent_manager comm_container">
+    <h1 class="comm_title">代理商管理 >> 账号管理</h1>
+    <div class="comm_table">
+        <div class="comm_search_box">
+            <div class="comm_search_item">
+                <label for="agentName">代理商姓名</label>
+                <input type="text" name="agentName" id="agentName" class="input_width_2" autocomplete >
+            </div>
+            <div class="comm_search_item">
+                <label for="phone">联系方式</label>
+                <input type="text" class="input_width_3" name="phone" id="phone" autocomplete >
+            </div>
+            <div class="comm_search_item verify_state" v-cloak>
+                <label for="agentType">代理类别</label>
+                <select name="agentType" class="status input_width_3" id="agentType">
+                    <option value="" selected>全部</option>
+                    <option value="1">区域代理</option>
+                    <option value="2">行业代理</option>
+                </select>
+            </div>
+            <div class="comm_search_item cascader">
+                <label for="areaId">地区</label>
+                <div class="case_container">
+                    <input type="text" class="input_width_3" name="areaId" id="areaId" :value="casValue.areaValue" readonly @click="isShowCse = true">
+                    <span class="clear_cas" @click="clear('casValue')">×</span>
+                    <div class="case_list" v-show="isShowCse">
+                        <div class="one_case cas">
+                            <ul>
+                                <li v-for="prov in areaInfo">
+                                    <span @click="chooseArea('casValue', prov,0)" :class="{'active':prov.active}">{{prov.areaName}}</span>
+                                    <div class="two_case cas" v-show="casValue.chosenAreas[0] && casValue.chosenAreas[0].length == 1 && prov.active">
+                                        <ul>
+                                            <li v-for="city in prov.childAreaList">
+                                                <span @click="chooseArea('casValue', city,1)" :class="{'active':city.active}">{{city.areaName}}</span>
+                                                <div class="three_case cas" v-show="casValue.chosenAreas[1] && casValue.chosenAreas[1].length == 1 && city.active">
+                                                    <ul>
+                                                        <li v-for="cou in city.childAreaList">
+                                                            <span @click="chooseArea('casValue', cou,2)" :class="{'active':cou.active}">{{cou.areaName}}</span>
+                                                        </li>
+                                                    </ul>
+                                                    <button @click="getAreaName('casValue', 2)">添加</button>
+                                                    <button @click="sure('casValue', 2)">确定</button>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        <button @click="getAreaName('casValue', 1)">添加</button>
+                                        <button @click="sure('casValue',1)">确定</button>
+                                    </div>
+                                </li>
+                            </ul>
+                            <button @click="getAreaName('casValue', 0)">添加</button>
+                            <button @click="sure('casValue',0)">确定</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="comm_search_item">
+                <label for="agNumber">代理商账号</label>
+                <input type="text" class="input_width_3" name="agNumber" id="agNumber" autocomplete >
+            </div>
+            <div class="cf"></div>
+            <div class="comm_search_item verify_state" v-cloak>
+                <label for="agentLevel">等级</label>
+                <select name="agentLevel" class="status input_width_3" id="agentLevel">
+                    <option value="" selected>全部</option>
+                    <option value="0">省级</option>
+                    <option value="1">市级</option>
+                    <option value="2">区县级</option>
+                </select>
+            </div>
+            <div class="comm_search_item">
+                <label for="beginTime">起始时间</label>
+                <input type="text" name="beginTime" class="flatpickr input_width_3" id="beginTime" autocomplete>
+            </div>
+            <div class="comm_search_item">
+                <label for="endTime">结束时间</label>
+                <input type="text" name="endTime" class="flatpickr input_width_3" id="endTime" autocomplete>
+            </div>
+            <button class="comm_search_item comm_button" @click="search">搜索</button>
+            <button class="comm_search_item comm_button" @click="add">添加</button>
+        </div>
+        <div class="comm_table_content">
+            <ul class="comm_table_title">
+                <li class="col_type_2"><span>id</span></li>
+                <li class="col_type_5"><span>姓名</span></li>
+                <li class="col_type_4"><span>联系方式</span></li>
+                <li class="col_type_3"><span>代理区域</span></li>
+                <li class="col_type_3"><span>账号</span></li>
+                <li class="col_type_3"><span>注册时间</span></li>
+                <li class="col_type_3"><span>类型</span></li>
+                <li class="col_type_2"><span>等级</span></li>
+                <li class="col_type_3"><span>操作</span></li>
+            </ul>
+            <ul class="comm_table_raw"  v-for = "(agent,index) in agentList">
+                <li class="col_type_2"><span>{{agent.agentId}}</span></li>
+                <li class="col_type_5"><span>{{agent.agAgentName}}</span></li>
+                <li class="col_type_4"><span>{{agent.agPhone}}</span></li>
+                <li class="col_type_3"><span>{{agent.areaName || '全国'}}</span></li>
+                <li class="col_type_3"><span>{{agent.agNumber}}</span></li>
+                <li class="col_type_3"><span>{{agent.registerTime | trans-date}}</span></li>
+                <li class="col_type_3"><span>{{agent.agentType | trans-agent-type}}</span></li>
+                <li class="col_type_2"><span>{{agent.agentLevel | trans-level-type}}</span></li>
+                <li class="col_type_3 operate"><span  @click="showEditDialog(agent)">编辑</span><span  @click="showPassDialog(agent)">删除</span></li>
+            </ul>
+        </div>
+        <div class="comm_page">
+            <span>共{{countNum}}条,每页显示6条,共{{pagesCount}}页,当前为第{{currentPage}}页</span>
+            <div class="comm_pagination_control">
+                <ul>
+                    <li v-for = "(pageItem,index) in pageArray" :class="{  'active': pageItem.isActive, 'page_hide': pageItem.isHidden  }" @click = "jumpPage(pageItem.count)">{{pageItem.count}}</li>
+                </ul>
+                <div class="page_input">
+                    <label for="page_index">跳转:</label>
+                    <input type="text" name="page_index" id="page_index" v-model="targetPage">
+                </div>
+                <button class="page_button" @click="jumpPage(targetPage)">GO</button>
+            </div>
+        </div>
+    </div>
+    <div class="dialog_container" id="detail_dialog">
+        <div class="dialog">
+            <h1 class="dialog_title">添加账号</h1>
+            <span class="b_close">×</span>
+            <article class="input_article">
+                <span class="mistake"></span>
+                <section class="input_section"><label>姓名:</label><input type="text" name="version" id="addAgentName" placeholder="不得为空"></section>
+                <section class="input_section"><label>电话:</label><input type="text" name="version" id="addPhone" placeholder="不得为空"></section>
+                <section class="input_section">
+                    <label>类别:</label>
+                    <div class="comm_search_item verify_state">
+                        <select name="appenv" class="input_width_3" v-model="agentType" @change="getExtraAreaInfo(agentType,spaceClassify)">
+                            <option value="-1">未选择</option>
+                            <option value="1">区域</option>
+                            <option value="2">行业</option>
+                        </select>
+                    </div>
+                </section>
+                <section class="input_section" v-show="agentType == 1">
+                    <label>等级:</label>
+                    <div class="comm_search_item verify_state">
+                        <select name="appenv" class="input_width_3" id="addAgentLevel">
+                            <option value="1">市级</option>
+                            <option value="2">区县级</option>
+                        </select>
+                    </div>
+                </section>
+                <section class="input_section" v-show="agentType == 2">
+                    <label>分类Id:</label>
+                    <div class="comm_search_item verify_state">
+                        <select name="isUpdate" class="input_width_3" v-model="spaceClassify" @change="getExtraAreaInfo(agentType,spaceClassify)">
+                            <option value="-1">未选择</option>
+                            <option v-for="cate in spaceCate" :value="cate.classifyId">{{cate.classifyName}}</option>
+                        </select>
+                    </div>
+                </section>
+                <section class="input_section cascader" v-if="isShowCascader" v-show="agentType == 1">
+                    <label for="areaId">地区</label>
+                    <div class="case_container">
+                        <input type="text" class="input_width_3" name="areaId" id="addAreaId" :value="addCasValue.areaValue" readonly @click="isShowAddCse = true">
+                        <span class="clear_cas" @click="clear('addCasValue')">×</span>
+                        <div class="case_list" v-show="isShowAddCse">
+                            <div class="one_case cas">
+                                <ul>
+                                    <li v-for="prov in extraAreaInfo">
+                                        <span @click="chooseArea('addCasValue', prov,0)" :class="{'active':prov.active}">{{prov.areaName}}</span>
+                                        <div class="two_case cas" v-show="addCasValue.chosenAreas[0] && addCasValue.chosenAreas[0].length == 1 && prov.active">
+                                            <ul>
+                                                <li v-for="city in prov.childAreaList">
+                                                    <span @click="chooseArea('addCasValue', city,1)" :class="{'active':city.active}">{{city.areaName}}</span>
+                                                    <div class="three_case cas" v-show="addCasValue.chosenAreas[1] && addCasValue.chosenAreas[1].length == 1 && city.active">
+                                                        <ul>
+                                                            <li v-for="cou in city.childAreaList">
+                                                                <span @click="chooseArea('addCasValue', cou,2)" :class="{'active':cou.active}">{{cou.areaName}}</span>
+                                                            </li>
+                                                        </ul>
+                                                        <button @click="getAreaName('addCasValue', 2)">添加</button>
+                                                        <button @click="sure('addCasValue', 2)">确定</button>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                            <button @click="getAreaName('addCasValue', 1)">添加</button>
+                                            <button @click="sure('addCasValue', 1)">确定</button>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <button @click="getAreaName('addCasValue', 0)">添加</button>
+                                <button @click="sure('addCasValue', 0)">确定</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="input_section">
+                    <label>收费类型:</label>
+                    <div class="comm_search_item verify_state">
+                        <select name="isUpdate" class="input_width_3" id="power">
+                            <option value="1">会员</option>
+                            <option value="2">佣金</option>
+                            <option value="3">会员和佣金</option>
+                        </select>
+                    </div>
+                </section>
+            </article>
+            <div class="button_container">
+                <button class="agree">确定</button>
+            </div>
+        </div>
+    </div>
+    <div class="dialog_container" id="edit_dialog">
+        <div class="dialog">
+            <h1 class="dialog_title">编辑</h1>
+            <span class="b_close">×</span>
+            <article class="input_article">
+                <span class="mistake"></span>
+                <section class="input_section"><label>姓名:</label><input type="text" name="version" id="editAgentName" placeholder="不得为空"></section>
+                <section class="input_section"><label>电话:</label><input type="text" name="version" id="editPhone" placeholder="不得为空"></section>
+            </article>
+            <div class="button_container">
+                <button class="agree">确定</button>
+            </div>
+        </div>
+    </div>
+    <div class="dialog_container" id="pass_dialog">
+        <div class="dialog">
+            <h1 class="dialog_title">确定删除?</h1>
+            <span class="b_close">×</span>
+            <div class="button_container">
+                <button class="agree">确定</button>
+            </div>
+        </div>
+    </div>
+</div>

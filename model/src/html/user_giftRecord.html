@@ -1,0 +1,55 @@
+<div class="user_giftRecord comm_container" v-cloak>
+    <h1 class="comm_title">用户管理 >> 送礼记录</h1>
+    <div class="comm_table">
+        <div class="comm_search_box">
+            <div class="comm_search_item">
+                <label for="fromUserId">送礼人ID</label>
+                <input type="text" name="fromUserId" id="fromUserId" autocomplete >
+            </div>
+            <div class="comm_search_item">
+                <label for="toUserId">接受人ID</label>
+                <input type="text" name="toUserId" id="toUserId" autocomplete >
+            </div>
+            <div class="comm_search_item">
+                <label for="beginTime">起始时间</label>
+                <input type="text" name="beginTime" class="flatpickr input_width_4" id="beginTime" autocomplete>
+            </div>
+            <div class="comm_search_item">
+                <label for="endTime">结束时间</label>
+                <input type="text" name="endTime" class="flatpickr input_width_4" id="endTime" autocomplete>
+            </div>
+            <button class="comm_search_item comm_button" id="shop_verify_search">搜索</button>
+        </div>
+        <div class="convert_content">
+            <ul class="comm_table_raw">
+                <li class="col_type_2"><span>送礼人ID</span></li>
+                <li class="col_type_3"><span>送礼人名称</span></li>
+                <li class="col_type_2"><span>接受人ID</span></li>
+                <li class="col_type_3"><span>接受人名称</span></li>
+                <li class="col_type_3"><span>送礼时间</span></li>
+                <li class="col_type_3"><span>红豆币数量</span></li>
+            </ul>
+            <ul class="comm_table_raw" v-for="(giftRecordItem,index) in giftRecordList">
+                <li class="col_type_2"><span>{{giftRecordItem.fromUserId}}</span></li>
+                <li class="col_type_3"><span>{{giftRecordItem.fromUserName}}</span></li>
+                <li class="col_type_2"><span>{{giftRecordItem.toUserId}}</span></li>
+                <li class="col_type_3"><span>{{giftRecordItem.toUserName}}</span></li>
+                <li class="col_type_3"><span>{{giftRecordItem.giveAwayTime | trans-date}}</span></li>
+                <li class="col_type_3"><span>{{giftRecordItem.redBeanNum}}</span></li>
+            </ul>
+        </div>
+        <div class="comm_page">
+            <span>共{{countNum}}条,每页显示6条,共{{pagesCount}}页,当前为第{{currentPage}}页</span>
+            <div class="comm_pagination_control">
+                <ul>
+                    <li v-for = "(pageItem,index) in pageArray" :class="{  'active': pageItem.isActive, 'page_hide': pageItem.isHidden  }" @click = "jumpPage(pageItem)">{{pageItem.count}}</li>
+                </ul>
+                <div class="page_input">
+                    <label for="page_index">跳转:</label>
+                    <input type="text" name="page_index" id="page_index" >
+                </div>
+                <button class="page_button">GO</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,120 @@
+<div class="comm_container supervision_and_inspection" v-cloak>
+	<h1 class="comm_title">直播管理 >> 监播巡查</h1>
+	<div class="comm_table">
+		<div class="comm_search_box">
+			<div class="comm_search_item">
+				<label for="SpaceNum">用户名</label>
+				<input type="text" name="SpaceNum" id="SpaceNum" autocomplete >
+			</div>
+			<button class="comm_search_item comm_button" id="shop_verify_search">搜索</button>
+		</div>
+		<div class="comm_table_content">
+			<h1 class="comm_title_2">直播界面截图</h1>
+			<ul>
+				<li class="live_item" v-for="live_item in shopList">
+					<figure @click="showDetail(live_item)">
+						<img :src="live_item.liveInfoDtoes[0].liveCoverPicUrl">
+						<span>{{live_item.liveInfo.infodomain.startTime | trans-date}}</span>
+					</figure>
+					<div>
+						<img  class="header" :src="live_item.liveInfo.picPath">
+						<span class="user_name">{{live_item.liveInfoDtoes[0].userName}}</span>
+						<s class="cf"></s>
+						<span class="position_icon"></span>
+						<span class="position">{{live_item.liveInfo.infodomain.liveAddress}}</span>
+						<span class="eye_icon"></span>
+						<span class="eyes">{{live_item.liveInfo.infodomain.watchNumber}}</span>
+						<span class="out" @click="out(live_item)">踢下线</span>
+						<span class="top">置顶</span>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div class="comm_page">
+			<span>共{{countNum}}条,每页显示10条,共{{pagesCount}}页,当前为第{{currentPage}}页</span>
+			<div class="comm_pagination_control">
+				<ul>
+					<li v-for = "(pageItem,index) in pageArray" :class="{  'active': pageItem.isActive, 'page_hide': pageItem.isHidden  }" v-on:click = "jumpPage(pageItem)">{{pageItem.count}}</li>
+				</ul>
+				<div class="page_input">
+					<label for="page_index">跳转:</label>
+					<input type="text" name="page_index" id="page_index" >
+				</div>
+				<button class="page_button">GO</button>
+			</div>
+		</div>
+	</div>
+	<div class="video_container">
+		<span class="close">×</span>
+		<img class="video_background_img" src="../img/video_background.jpg">
+		<div class="blur">
+			<div class="left_side">
+				<section class="live_info">
+					<figure>
+						<img :src="detailContent.headPath">
+						<span>{{detailContent.userName}}</span>
+					</figure>
+					<div>
+						<span>{{detailContent.watchNum}}</span><span>人在看</span>
+					</div>
+				</section>
+				<ul>
+					<li><span><b>{{detailContent.liveNum}}</b><br>关注</span></li>
+					<li><span><b>{{detailContent.liveNum}}</b><br>粉丝</span></li>
+					<li><b>{{detailContent.address}}</b></li>
+				</ul>
+				<div class="right_side">
+					<textarea placeholder="请输入踢主播下线的原因"></textarea>
+					<button class="refuse">踢下线</button>
+					<button>置顶</button>
+				</div>
+			</div>
+			<div class="no_flash" v-if="noFlash">您需要安装Flash Player后才能观看精彩直播～<br>
+				请您<a target="_blank" href="http://www.adobe.com/go/getflashplayer_cn">安装</a>后刷新本页面</div>
+			<div id="videoJsContainer">
+				<video id="videoPlayer" class="video-js vjs-default-skin" controls autoplay preload="none" width="480" height="380">        
+				        <source src="" type="rtmp/flv"/>
+				</video>
+			</div>
+			<div class="right_content">
+				<div class="fr">
+					<div class="show_area">
+						<!--<span class="top" @click.stop="getAdminList()">管理员/禁言列表</span>-->
+						<div class="no_scroll">
+							<div class="chatArea" id="chatContainer">
+								<div class="chat_wrap">
+									<p class="message" v-for="item in messageList">
+                                            <span :style="{color: item.usernameColor}"
+												  v-show="item.username">{{item.username}}:
+                                            </span>
+										<span :style="{color:item.color}">{{item.content}}</span>
+									</p>
+								</div>
+							</div>
+						</div>
+						<!--<div class="editArea">-->
+							<!--<input type="text" placeholder="说点什么吧" v-model="message" @keyup.enter="sendMessageHandle()">-->
+							<!--<button @click="sendMessageHandle()">发送</button>-->
+						<!--</div>-->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="dialog_container" id="refuse_dialog">
+	    <div class="dialog">
+	    	    <h1 class="dialog_title">踢人原因</h1>
+		    <span class="b_close">×</span>
+		    <article>
+		    	<textarea placeholder="请输入踢人原因,300字内" maxlength="300" id="reason"></textarea>
+		    	<section class="dialog_raw_4">
+			    	<label><input type="radio" name="type" value="0">正常关闭</label>
+			    	<label><input type="radio" name="type" value="1">禁止推流</label>
+			</section>
+		    </article>
+		    <div class="button_container">
+		    	<button class="refuse">确认</button>
+		    </div>
+	    </div>
+	</div>
+</div>

@@ -1,0 +1,50 @@
+<div class="role_manager comm_container" v-cloak>
+	<h1 class="comm_title">系统管理 >> 角色管理</h1>
+	<div class="comm_table">
+		<div class="comm_table_content">
+			<button class="add_button">+添加新角色</button>
+			<ul class="comm_table_title">
+				<li class="col_type_2"><span>角色ID</span></li>
+				<li class="col_type_4"><span>角色名字</span></li>
+				<li class="col_type_4"><span>角色状态</span></li>
+				<li class="col_type_4"><span>操作</span></li>
+			</ul>
+			<ul class="comm_table_raw"  v-for = "roleItem in roleList">
+				<li class="col_type_2"><span>{{roleItem.roleId}}</span></li>
+				<li class="col_type_4"><span>{{roleItem.roleName}}</span></li>
+				<li class="col_type_4"><span>{{roleItem.status | trans-role-status}}</span></li>
+				<li class="col_type_4 operate"><span @click = "showDetailDialog(roleItem)">编辑</span><span  @click = "showPassDialog(roleItem)">删除</span></li>
+			</ul>
+		</div>
+	</div>
+	<div class="dialog_container" id="detail_dialog">
+	    <div class="dialog">
+	    	    <h1 class="dialog_title">角色详情</h1>
+		    <span class="b_close">×</span>
+		    <article class="input_article">
+		    	<section class="input_section"><label>角色名字:</label><input type="text" name="roleName" placeholder="可以为空" id="roleName"></section>
+		    	<section class="input_section">
+		    		<label>角色状态:</label>
+		    		<div class="comm_search_item verify_state">
+		    			<select name="status" class="input_width_3" id="status">
+		    			  <option value="0">可用</option>
+		    			  <option value="1">不可用</option>
+					</select>
+		    		</div>
+			</section>
+		    </article>
+		    <div class="button_container">
+		    	<button class="agree">确定</button>
+		    </div>
+	    </div>
+	</div>
+	<div class="dialog_container" id="pass_dialog">
+	    <div class="dialog">
+	    	    <h1 class="dialog_title">确定要删除吗?</h1>
+		    <span class="b_close">×</span>
+		    <div class="button_container">
+		    	<button class="agree">确定</button>
+		    </div>
+	    </div>
+	</div>
+</div>

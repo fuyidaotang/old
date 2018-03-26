@@ -1,0 +1,119 @@
+<article class="detail" id="detail">
+    <div class="detail-swiper-container swiper-container">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide" v-for="bannerPic in bannerPics">
+                <img class="bannerPic" v-bind:src="bannerPic.picpath">
+                <!-- <img class="loading" src="../img/loading.gif"> -->
+            </div>
+        </div>
+        <div class="swiper-pagination"></div>
+    </div>
+    <section class="section_1" v-cloak>
+        <h2>{{productTitle}}</h2>
+        <h5>¥<span>{{productPrice}}</span></h5>
+        <p><span>运费:&nbsp;&nbsp;{{productFreight}}</span><span>库存:&nbsp;&nbsp;{{productInventory}}</span></p>
+        <!-- <h6>
+        	<img class="mark_name" src="../img/mark_name.png">
+        	<img class="mark_store" src="../img/mark_store.png">
+        </h6> -->
+    </section>
+    <section class="section_2">
+        <ul>
+            <li class="active">商品详情</li>
+            <li>用户评论</li>
+        </ul>
+    </section>
+    <section class="replace">
+    </section>
+    <section class="section_3" v-cloak>
+        <div class="detail_content" v-html="productDesc"></div>
+        <section class="pro_list" v-cloak>
+            <h2>其它商品</h2>
+            <ul id="masonry" class="container-fluid">
+                <li class="box" v-for="pro in proList" v-on:click="goDetail(pro.productId)">
+                    <img v-bind:src="pro.productImage">
+                    <h4>{{pro.productName}}</h4>
+                    <h5>¥<span>{{pro.productPrice}}</span></h5>
+                </li>
+            </ul>
+        </section>
+    </section>
+    <section class="section_4 hidden">
+        <h2 v-cloak>评论({{countNum}})</h2>
+        <div class="pre_score">
+            <span>商品得分</span>
+            <figure>
+                <div>
+                    <figure><img src="../img/pre_heart.png" alt=""></figure>
+                    <figure class="light"><img src="../img/heart.png" alt=""></figure>
+                </div>
+                <div>
+                    <figure><img src="../img/pre_heart.png" alt=""></figure>
+                    <figure class="light"><img src="../img/heart.png" alt=""></figure>
+                </div>
+                <div>
+                    <figure><img src="../img/pre_heart.png" alt=""></figure>
+                    <figure class="light"><img src="../img/heart.png" alt=""></figure>
+                </div>
+                <div>
+                    <figure><img src="../img/pre_heart.png" alt=""></figure>
+                    <figure class="light"><img src="../img/heart.png" alt=""></figure>
+                </div>
+                <div>
+                    <figure><img src="../img/pre_heart.png" alt=""></figure>
+                    <figure class="light"><img src="../img/heart.png" alt=""></figure>
+                </div>
+            </figure>
+            <span v-cloak>{{score}}</span>
+        </div>
+        <div class="noComment">暂无评论</div>
+        <ul class="commen_list">
+            <li v-for="comment in commentList" v-cloak>
+                <figure>
+                    <img v-bind:src="comment.headPath">
+                </figure>
+                <div>
+                    <span>{{comment.username}}</span>
+                    <span>{{comment.commentTime}}</span>
+                    <p>{{comment.commentDesc}}</p>
+                </div>
+            </li>
+        </ul>
+    </section>
+    <section class="detail_foot">
+        <button class="shop_index">店铺首页</button>
+        <button class="buy">立即购买</button>
+    </section>
+    <div class="chooseSize hidden" id="pro_detail">
+        <figure class="close">
+            <img src="../img/close.png">
+        </figure>
+        <div class="live_shop_box">
+            <section>
+                <img v-bind:src="productImage">
+                <div v-cloak>
+                    ¥<span>{{proDetail.proPrice}}</span><span>(库存:{{proDetail.productInventory}}件)</span>
+                    <br>
+                    <span>请选择商品规格</span>
+                </div>
+            </section>
+            <section>
+                <h4>商品规格</h4>
+                <ul id="sizes">
+                    <li v-for="size in proDetail.sizes" v-bind:class="{active:size.isActive}" v-on:click="chooseSize(size)" v-cloak>{{size.content}}</li>
+                </ul>
+            </section>
+        </div>
+        <section class="count">
+            <span class="fl">数量</span>
+            <div class="fr">
+                <span id="reduce" v-on:click="reduce">-</span>
+                <input type="num" v-model="count" v-on:change="suit">
+                <span id="plus" v-on:click="plus">+</span>
+            </div>
+        </section>
+        <section class="confirm_buy">
+            <button class="goConfirm">确认</button>
+        </section>
+    </div>
+</article>

@@ -1,0 +1,75 @@
+<div class="comm_container vote_list">
+    <h1 class="comm_title">营销活动 >> 网红海选  <span class="add_vote" @click="addUser">添加网红</span><span class="right">今日分享抽奖：{{eventInfo.shareTimes}}次，共计{{eventInfo.shareAmount}}元 今日网红登录人数：{{eventInfo.loginNum}}人</span></h1>
+    <div class="container">
+        <ul class="search_head">
+            <li><span>手机号</span><input type="text" v-model="phone"></li>
+            <li><span>店铺ID</span><input type="text" v-model="spaceId"></li>
+            <li><span>店铺名称</span><input type="text" v-model="spaceName"></li>
+            <li><span>编号</span><input type="text" v-model="number"></li>
+            <li><button @click="search" class="search_btn">搜索</button></li>
+        </ul>
+        <div class="all">
+            <input type="checkbox" @change="checkAll($event)" class="all_check" id="check_all"><label for="check_all" >全选</label> <button @click="allShow()" class="out">移出网红库</button>
+        </div>
+        <table class="red_list">
+            <thead>
+                <tr>
+                <td></td>
+                <td>编号</td>
+                <td>店铺ID</td>
+                <td>店铺名称</td>
+                <td>网红姓名</td>
+                <td>手机号</td>
+                <td>认证类型</td>
+                <td>操作</td>
+            </tr>
+            </thead>
+            <tbody v-if="tableData.length>0">
+               <tr v-for="(list,index) in tableData">
+                <td><input @change="checkChange(list,$event)" :value="list.userId" type="checkbox" class="checked"></td>
+                <td>{{index+1}}</td>
+                <td>{{list.spaceNum}}</td>
+                <td>{{list.spaceName}}</td>
+                <td><input @change="changeName(list,$event)" type="text" v-model="list.verifyName"></td>
+                <td>{{list.phoneNo}}</td>
+                <td v-if="list.verifyType==1">实名认证</td>
+                <td v-if="list.verifyType==2">实体店认证</td>
+                <td v-if="list.verifyType==3">全景店认证</td>
+                <td v-if="list.verifyType==4">网络红人</td>
+                <td v-if="list.verifyType==5">海外买手</td>
+                <td v-if="list.verifyType==6">实力工厂</td>
+                <td v-if="list.verifyType==7">源头好货</td>
+                <td v-if="list.verifyType==8">旗舰店</td>
+                <td v-if="!list.verifyType">无</td>
+                <td>
+                    <span class="out" @click="showDelBox(list,index)">移出网红库</span>
+                    <span class="detail" @click="routerDetai(list.userId)">查看详情</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div v-if="tableData.length>0" class="comm_page">
+            <span>共{{countNum}}条,每页显示10条,共{{pagesCount}}页,当前为第{{currentPage}}页</span>
+            <div class="comm_pagination_control">
+                <ul>
+                    <li v-for = "(pageItem,index) in pageArray" :class="{  'active': pageItem.isActive, 'page_hide': pageItem.isHidden  }" @click = "jumpPage(pageItem.count,pageItem)">{{pageItem.count}}</li>
+                </ul>
+                <div class="page_input">
+                    <label for="page_index">跳转:</label>
+                    <input type="text" name="page_index" id="page_index" v-model="targetPage">
+                </div>
+                <button class="page_button" @click="jumpPage(targetPage)">GO</button>
+            </div>
+        </div>
+    </div>
+    <div v-if="delShow" class="dio_box">
+        <div class="title">移出网红库 <span style="font-size: 16px;font-weight: bold;color:#fff;float:right;margin-right:20px;padding:4px;margin-top:4px;cursor:pointer;" @click="delShow=false;">X</span></div>
+        <div class="text">确定将用户移出网红库吗？</div>
+        <button class="action_btn" @click="deleteUser(userItem,userIndex)">确定</button>
+    </div>
+    <div v-if="allDelShow" class="dio_box">
+        <div class="title">移出网红库 <span style="font-size: 16px;font-weight: bold;color:#fff;float:right;margin-right:20px;padding:4px;margin-top:4px;cursor:pointer;" @click="allDelShow=false;">X</span></div>
+        <div class="text">确定将用户移出网红库吗？</div>
+        <button class="action_btn" @click="deleteAll()">确定</button>
+    </div>
+</div>

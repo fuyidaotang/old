@@ -1,0 +1,38 @@
+<article class="index" id="index">
+    <div class="detail-swiper-container swiper-container">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide" v-for="bannerPic in bannerPics">
+                <img class="bannerPic" v-bind:src="bannerPic.picpath">
+                <!-- <img class="loading" src="../img/loading.gif"> -->
+            </div>
+        </div>
+        <div class="swiper-pagination"></div>
+    </div>
+    <section class="section_1">
+        <h3>店铺简介</h3>
+        <p v-cloak>{{shopInfo}}</p>
+    </section>
+    <section class="section_2">
+                    <h2>
+			<img src="../img/left.png">
+			<span>全部宝贝</span>
+			<img src="../img/right.png">
+		</h2>
+    </section>
+    <section class="section_3">
+        <ul>
+            <li class="active">最多购买</li>
+            <li>价格最低</li>
+            <li>最新上架</li>
+        </ul>
+    </section>
+    <section class="pro_list">
+        <ul id="masonry" class="container-fluid">
+            <li class="box" v-for="pro in proList" v-on:click="goDetail(pro.productId)">
+                <img v-bind:src="pro.productImage">
+                <h4 v-cloak>{{pro.productName}}</h4>
+                <h5>¥<span v-cloak>{{pro.productPrice}}</span></h5>
+            </li>
+        </ul>
+    </section>
+</article>
